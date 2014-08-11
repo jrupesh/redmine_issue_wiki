@@ -2,20 +2,21 @@
 
 == Install
 
-* Copy redmine_issue_history plugin to {RAILS_APP}/plugins on your redmine path
+* Copy redmine_issue_wiki plugin to {RAILS_APP}/plugins on your redmine path
 
 == Uninstall
 
-* rake redmine:plugins NAME= redmine_issue_history RAILS_ENV=production
-* rm -r plugins/redmine_issue_history
+* rake redmine:plugins NAME= redmine_issue_wiki RAILS_ENV=production
+* rm -r plugins/redmine_issue_wiki
 
 == How it works
 
 * Go to issue list.
-* Select an issue. Go to tab "Comments". This will have all the comments.
+* Select an issue. Go to tab "Wiki". This will show a new Wiki for the issue.
+* All the wiki options are available. The wiki is created with name Wiki-{issueId}
 
 == Requirements
 
-* Redmine 2.2.4.stable and above
+* Redmine 2.5.2.stable and above
 
 This software is licensed under the terms of the GNU General Public License (GPL) v2. See COPYRIGHT and COPYING for details.

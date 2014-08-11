@@ -1,10 +1,7 @@
-<% content_for :header_tags do%>
-  <%= stylesheet_link_tag('issue_history_tabs.css', :plugin => :redmine_issue_history) %>
-<%end%>
-
-<% tabs = [ {:label => :label_history_tab_all, :name => 'history-all'},
-	          {:label => :label_history_tab_comments, :name => 'history-comments'} ] %> 
-<% selected_tab = 'history-all' %>
+<% tabs = [ {:label => :label_tab_all,      :name => 'issue-all'},
+	          {:label => :label_tab_comments, :name => 'issue-comments'},
+            {:label => :label_tab_wiki,     :name => 'issue-wiki'} ] %> 
+<% selected_tab = 'issue-all' %>
 
 <div class="tabs">
   <ul>
@@ -16,22 +13,24 @@
   </ul>
 </div>
 <% reply_links = authorize_for('issues', 'edit') -%>
-<% for journal in journals.sort.reverse%>
-  <% if selected_tab == 'history-all' || journal.css_classes == 'journal has-notes'%>
+<% for journal in journals %>
+  <% if selected_tab == 'issue-all' || journal.css_classes == 'journal has-notes'%>
     <div id="change-<%= journal.id %>" class="<%= journal.css_classes %>">
+      <div id="note-<%= journal.indice %>">
       <h4><%= link_to "##{journal.indice}", {:anchor => "note-#{journal.indice}"}, :class => "journal-link" %>
       <%= avatar(journal.user, :size => "24") %>
-      <%= content_tag('a', '', :name => "note-#{journal.indice}")%>
+      <%#= content_tag('a', '', :name => "note-#{journal.indice}")%>
       <%= authoring journal.created_on, journal.user, :label => :label_updated_time_by %></h4>
 
       <% if journal.details.any? %>
         <ul class="details">
-          <% details_to_strings(journal.details).each do |string| %>
+        <% details_to_strings(journal.visible_details).each do |string| %>
            <li><%= string %></li>
           <% end %>
         </ul>
       <% end %>
       <%= render_notes(issue, journal, :reply_links => reply_links) unless journal.notes.blank? %>
+    </div>
     </div>
     <%= call_hook(:view_issues_history_journal_bottom, { :journal => journal }) %>  
   <% end %>

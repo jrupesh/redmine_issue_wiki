@@ -1,3 +1,4 @@
 en:
-  label_history_tab_all: History
-  label_history_tab_comments: Comments
+  label_tab_all: History
+  label_tab_comments: Comments
+  label_tab_wiki: Wiki
