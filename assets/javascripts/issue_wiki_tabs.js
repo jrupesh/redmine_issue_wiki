@@ -53,3 +53,9 @@ function show_wiki(id){
   });
   return;
 };
+
+function addIssueWikiWith(html){
+  var replacement = $(html);
+  $('#tab-issue-wiki').empty();
+  $('#tab-issue-wiki').append(replacement);
+};
