@@ -1,1 +1,1 @@
-match 'issuewiki',  :to => 'issue_wiki#create_issue_wiki',  :as => 'issue_wiki',  :via => [:post, :put]
+match 'issues/issuewiki',  :to => 'issue_wiki#create_issue_wiki',  :as => 'issue_wiki',  :via => [:post, :put]

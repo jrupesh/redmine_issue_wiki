@@ -1,10 +1,10 @@
 <% content_for :header_tags do%>
-  javascript_include_tag('issue-wiki-tabs.js', :plugin => :redmine_issue_wiki)
+  <%= javascript_include_tag('issue_wiki_tabs.js', :plugin => :redmine_issue_wiki) %>
 <%end%>
 
 <% tabs = [ {:label => :label_tab_all,      :name => 'issue-all'},
 	          {:label => :label_tab_comments, :name => 'issue-comments' },
-            {:label => :label_tab_wiki,     :name => 'issue-wiki'     , :onclick => "show_wiki(#{issue.id})"}] %> 
+            {:label => :label_tab_wiki,     :name => 'issue-wiki'     , :onclick => "show_wiki(#{issue.id});"}] %> 
 <% selected_tab = 'issue-all' %>
 
 <div class="tabs">
