@@ -1,5 +1,4 @@
 require 'redmine'
-require 'redmine_issue_wiki_listener.rb'
 
 Redmine::Plugin.register :redmine_issue_wiki do
   name 'Redmine Issue Wiki'
