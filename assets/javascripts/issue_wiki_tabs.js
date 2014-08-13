@@ -26,15 +26,7 @@ $(document).ready(function(){
   $('a#tab-issue-comments').bind("click",function(e){
     show_only_comments();
   });
-  /*
-  $('a#tab-issue-wiki').bind("click",function(e){
-    var i = "0";
-    show_wiki(i);
-  });
-  
-  $('#tab-issue-wiki').bind("ajax:beforeSend", function(xhr, opts){toggle_wiki(xhr,opts);});
-  $('#tab-issue-wiki').bind("ajax:error", function(evt, data, status, xhr){});
-  */
+
 });
 
 function show_wiki(id){
@@ -45,12 +37,19 @@ function show_wiki(id){
 
   if ($('#tab-issue-wiki').hasClass("loaded") == true){
       $('#tab-issue-wiki').show();
-      return false;
+      return;
     };
   $.ajax({
-    url: "issuewiki?id="+String(id),
-    type: 'post',
-    data: $('#tab-issue-wiki').serialize()
+    url: String(id)+"/showissuewiki",
+    type: 'get'
+  })
+  .done(function(data) {
+    if ( console && console.log ) {
+      console.log( "console data:", data );
+    };
+  })
+  .fail(function(jqXHR, textStatus) {
+    alert( "Wiki Load failed: " + textStatus );
   });
-  return true;
+  return;
 };

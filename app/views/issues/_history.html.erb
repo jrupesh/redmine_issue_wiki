@@ -3,8 +3,13 @@
 <%end%>
 
 <% tabs = [ {:label => :label_tab_all,      :name => 'issue-all'},
-	          {:label => :label_tab_comments, :name => 'issue-comments' },
-            {:label => :label_tab_wiki,     :name => 'issue-wiki'     , :onclick => "show_wiki(#{issue.id});"}] %> 
+	          {:label => :label_tab_comments, :name => 'issue-comments'}
+          ]
+
+  wiki_tab = {:label => :label_tab_wiki,    :name => 'issue-wiki'     , :onclick => "show_wiki(#{issue.id});"}
+
+  tabs.push ( wiki_tab ) if User.current.allowed_to?(:wiki_issue, issue.project) %> 
+
 <% selected_tab = 'issue-all' %>
 
 <div class="tabs">
