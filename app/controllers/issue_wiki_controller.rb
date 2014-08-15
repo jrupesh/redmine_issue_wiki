@@ -1,7 +1,8 @@
 class IssueWikiController < ApplicationController
   unloadable
   before_filter :find_wiki, :authorize
-  before_filter :find_existing_or_new_page, :only => [:show_issue_wiki]
+  before_filter :find_existing_or_new_page, :only => [:show_issue_wiki, :update_issue_wiki]
+  before_filter :find_attachments, :only => [:preview]
 
   helper :attachments
   include AttachmentsHelper
@@ -10,9 +11,11 @@ class IssueWikiController < ApplicationController
   helper :wiki
   include WikiHelper
 
+  helper :issue_wiki
+  include IssueWikiHelper
+
   def show_issue_wiki
-    logger.debug("IssueWikiController : show_issue_wiki")
-    if params[:version] && !User.current.allowed_to?(:view_wiki_edits, @project)
+    if params[:version] && !User.current.allowed_to?(:view_issue_wiki_edits, @project)
       deny_access
       return
     end
@@ -33,6 +36,7 @@ class IssueWikiController < ApplicationController
 
     respond_to do |format|
       format.html
+      format.js { render :layout => false }
       format.api
     end    
   end
@@ -100,7 +104,7 @@ class IssueWikiController < ApplicationController
         }
         format.api {
           if was_new_page
-            render :action => 'show', :status => :created, :location => project_wiki_page_path(@project, @page.title)
+            render :action => 'show_issue_wiki', :status => :created, :location => project_wiki_page_path(@project, @page.title)
           else
             render_api_ok
           end
@@ -108,7 +112,8 @@ class IssueWikiController < ApplicationController
       end
     else
       respond_to do |format|
-        format.html { render :action => 'edit' }
+        format.html { render :action => 'edit_issue_wiki' }
+        format.js { render :action => 'edit_issue_wiki' }
         format.api { render_validation_errors(@content) }
       end
     end
@@ -118,15 +123,27 @@ class IssueWikiController < ApplicationController
     respond_to do |format|
       format.html {
         flash.now[:error] = l(:notice_locking_conflict)
-        render :action => 'edit'
+        render :action => 'edit_issue_wiki'
       }
       format.api { render_api_head :conflict }
     end
   rescue ActiveRecord::RecordNotSaved
     respond_to do |format|
-      format.html { render :action => 'edit' }
+      format.html { render :action => 'edit_issue_wiki' }
       format.api { render_validation_errors(@content) }
     end
+  end
+
+  def preview
+    page = @wiki.find_page(params[:id])
+    # page is nil when previewing a new page
+    return render_403 unless page.nil? || editable?(page)
+    if page
+      @attachments += page.attachments
+      @previewed = page.content
+    end
+    @text = params[:content][:text]
+    render :partial => 'common/preview'
   end
 
 private
@@ -149,13 +166,13 @@ private
 
   # Finds the requested page and returns a 404 error if it doesn't exist
   def find_existing_page
-    @page = @wiki.find_page(params[:id])
+    @page = @wiki.find_page(params[:issue_wiki_id])
     if @page.nil?
       render_404
       return
     end
     if @wiki.page_found_with_redirect?
-      redirect_to params.update(:id => @page.title)
+      redirect_to params.update(:issue_wiki_id => @page.title)
     end
   end
 

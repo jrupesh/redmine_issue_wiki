@@ -1,0 +1,28 @@
+<%= form_for @content, :as => :content,
+    :url => {:action => 'update_issue_wiki', :id => @issue.id , :issue_wiki_id => @page.title},
+    :html => {:method => :put, :multipart => true, :id => 'issue_wiki_form', :remote => true} do |f| %>
+<%= f.hidden_field :version %>
+<% if @section %>
+<%= hidden_field_tag 'section', @section %>
+<%= hidden_field_tag 'section_hash', @section_hash %>
+<% end %>
+<%= error_messages_for 'content' %>
+
+<div class="box tabular">
+<%= edit_issue_wiki_sections(@text) %>
+
+<p><label><%=l(:label_attachment_plural)%></label><%= render :partial => 'attachments/form' %></p>
+</div>
+
+<p><%= submit_tag l(:button_save) %>
+   <%= preview_link({:controller => 'issue_wiki', :action => 'preview', :id => @issue.id, :issue_wiki_id => @page.title }, 'issue_wiki_form') %></p>
+<%= wikitoolbar_for 'content_text' %>
+<% end %>
+
+<div id="preview" class="wiki"></div>
+
+<% content_for :header_tags do %>
+  <%= robot_exclusion_tag %>
+<% end %>
+
+<% html_title @page.pretty_title %>

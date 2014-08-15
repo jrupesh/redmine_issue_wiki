@@ -23,6 +23,8 @@
     <% end -%>
   </ul>
 </div>
+<div id="issue-wiki">
+</div>
 <% reply_links = authorize_for('issues', 'edit') -%>
 <% for journal in journals %>
   <% if selected_tab == 'issue-all' || journal.css_classes == 'journal has-notes'%>
@@ -49,5 +51,3 @@
 
 <% heads_for_wiki_formatter if User.current.allowed_to?(:edit_issue_notes, issue.project) || User.current.allowed_to?(:edit_own_issue_notes, issue.project) %>
 
-<div id="issue-wiki">
-</div>

@@ -36,12 +36,15 @@ function show_wiki(id){
   $('.journal.has-notes.has-details .details,.journal.has-notes.has-details, .journal.has-details, .journal').hide();
 
   if ($('#tab-issue-wiki').hasClass("loaded") == true){
-      $('#tab-issue-wiki').show();
+      $('#issue-wiki').show();
       return;
     };
   $.ajax({
-    url: String(id)+"/showissuewiki",
+    url: String(id)+"/showissuewiki.js",
     type: 'get'
+  })
+  .success(function(data){
+    // addIssueWikiWith(data); 
   })
   .done(function(data) {
     if ( console && console.log ) {
@@ -56,6 +59,7 @@ function show_wiki(id){
 
 function addIssueWikiWith(html){
   var replacement = $(html);
-  $('#tab-issue-wiki').empty();
-  $('#tab-issue-wiki').append(replacement);
+  $('#issue-wiki').empty();
+  $('#issue-wiki').append(replacement);
+  $('#issue-wiki').show();
 };
