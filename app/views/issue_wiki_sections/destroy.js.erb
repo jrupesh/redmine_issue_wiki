@@ -1,0 +1,7 @@
+<% if @issuewikisections.destroyed? %>
+  $('#tab-content-issue_wiki_sections').empty();
+  $('#tab-content-issue_wiki_sections').html('<%= escape_javascript(render :partial => 'projects/settings/issue_wiki_sections') %>');
+<% else %>
+  alert('<%= raw(escape_javascript(l(:notice_failed_to_detele_iws,
+   :errors => @project.errors.full_messages.join(', ')))) %>');
+<% end %>

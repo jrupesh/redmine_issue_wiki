@@ -1,4 +1,15 @@
 en:
   label_tab_all: History
   label_tab_comments: Comments
+
   label_tab_wiki: Wiki
+  label_iws: Issue Wiki Sections
+  label_iws_heading: Section
+  label_iws_format: Wiki Format
+  label_iws_creator: Creator/Updator
+  label_iws_new: New Section
+  label_iws_edit: Edit Section
+
+  notice_failed_to_create_iws: Failed to create Wiki Section
+  notice_failed_to_detele_iws: Failed to delete Wiki Section
+  notice_failed_to_update_iws: Failed to update Wiki Section

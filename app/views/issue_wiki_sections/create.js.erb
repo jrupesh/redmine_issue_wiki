@@ -1,0 +1,8 @@
+<% if @issuewikisections.valid? %>
+  $('#tab-content-issue_wiki_sections').empty();
+  $('#tab-content-issue_wiki_sections').html('<%= escape_javascript(render :partial => 'projects/settings/issue_wiki_sections') %>');
+  $("iws-<%= @issuewikisections.id %>").effect("highlight");
+<% else %>
+  alert('<%= raw(escape_javascript(l(:notice_failed_to_create_iws,
+   :errors => @project.errors.full_messages.join(', ')))) %>');
+<% end %>

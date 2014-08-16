@@ -1,0 +1,87 @@
+<% if !@project.issue_wiki_sections.any? %>
+  <p id="iws_nodata" class="nodata"><%= l(:label_no_data) %></p>
+<% else %>
+  <script type="text/javascript">
+    function edit_form_hide(e){
+      var ele = $( e );
+      ele.parent().parent().hide();
+      ele.parent().parent().prev().show();
+    }
+    function edit_form_show(e){
+      var ele = $( e );
+      ele.parent().parent().hide();
+      ele.parent().parent().next().show();
+    }
+  </script>
+  <table class="list">
+    <thead><tr>
+      <th style="width:2%"><%= l(:label_index)%></th>
+      <th style="width:78%"><%= l(:label_iws_heading) %></th>
+      <th style="width:4%"><%= l(:label_iws_format) %></th>
+      <th style="width:8%"><%= l(:label_iws_creator) %></th>
+      <th style="width:8%"><%= l(:button_sort)%></th>
+      <th></th>
+    </tr></thead>
+    <tbody>
+      <% @project.issue_wiki_sections.sorted.each_with_index do |iws, indx| %>
+        <tr id="iws-<%= iws.id %>" class="<%= cycle 'odd', 'even' %>">
+          <td><%= indx + 1 %></td>
+          <td><%= iws.heading %></td>
+          <td><%= iws.wikiformat %></td>
+          <td><%= link_to iws.user, user_path(iws.user) %></td>
+
+          <td class="reorder">
+            <%= reorder_links('issue_wiki_sections', {:controller => 'issue_wiki_sections',
+              :action => 'update', :project_id => @project.id,
+              :id => iws.id }, :put) %>
+          </td>
+          <td class="buttons">
+            <%= link_to_function( l(:button_edit), "edit_form_show(this)",
+            :class => 'icon icon-edit') %>
+            <%= delete_link issue_wiki_section_path(:project_id => @project.id, :id => iws.id),
+              :remote => true %>
+          </td>
+        </tr>
+
+        <tr id="iws_edit_form-<%= iws.id %>" style="display:none;">
+          <%= form_for(iws, :remote => true,
+            :url => update_issue_wiki_section_path(:project_id => @project.id, :id => iws.id),
+            :html => {:method => :post, :style => 'display:none;'}) do |f| %>
+            <td><%= indx + 1 %></td>
+            <td><%= f.text_field :heading, :required => true, :style => "width:80%" %></td>
+            <td><%= f.select :wikiformat,
+              IssueWikiSection::AVAILABLE_FORMATS, :style => "width:4%" %></td>
+            <td><%= f.submit l(:button_submit)%></td>
+            <td><%= link_to_function( l(:button_cancel),
+              "edit_form_hide(this)" )%></td>
+            <td></td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<style type="text/css">
+  #iws_new_form {margin-top: 1em;}
+  #iws_new_form label {font-weight: bold;}
+  #iws_new_form input {margin-top: 1px; margin-bottom: 1px;margin-left:10%;}
+  #iws_new_form select {margin-top: 1px; margin-bottom: 1px;margin-left:9%;}
+</style>
+
+<%= form_for(:issue_wiki_sections, :remote => true,
+:url => {:controller => 'issue_wiki_sections', :action => 'create', :project_id => @project.id},
+:html => {:method => :post, :id => "iws_new_form", :style => 'display:none;'}) do |f| %>
+  <p><%= f.label :heading %>
+    <%= f.text_field :heading, :required => true, :style => "width:80%" %></p>
+  <p><%= f.label :wikiformat %><%= f.select :wikiformat, IssueWikiSection::AVAILABLE_FORMATS, 
+    :style => "width:4%" %></p>
+  <p><%= f.submit l(:button_submit)%>
+     <%= link_to_function( l(:button_cancel), "$('#iws_new_form').hide();")%></p>
+<% end %>
+
+<p>
+  <%= link_to_function( l(:label_iws_new), "$('#iws_new_form').show();",
+    :class => 'icon icon-add') if User.current.allowed_to?(:manage_issue_wiki_sections, @project)%>
+</p>
+

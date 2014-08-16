@@ -1,4 +1,5 @@
 require 'redmine'
+require 'issue_wiki_patches/project_patch'
 
 Redmine::Plugin.register :redmine_issue_wiki do
   name 'Redmine Issue Wiki'
@@ -10,6 +11,10 @@ Redmine::Plugin.register :redmine_issue_wiki do
   project_module :wiki do
     permission :wiki_issue,             { :issue_wiki => [ :show_issue_wiki ] }, :require => :member
     permission :view_issue_wiki_edits,  { :issue_wiki => [ :show_issue_wiki ] }, :require => :member
-    permission :edit_issue_wiki_pages,  { :issue_wiki => [ :show_issue_wiki, :edit_issue_wiki, :update_issue_wiki ] }, :require => :member
+    permission :edit_issue_wiki_pages,  { :issue_wiki => [ :show_issue_wiki, :edit_issue_wiki,
+     :update_issue_wiki ] }, :require => :member
+
+    permission :manage_issue_wiki_sections, { :issue_wiki_sections => 
+      [ :index, :create, :update, :destroy ] }, :require => :member
   end
 end
