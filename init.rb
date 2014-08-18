@@ -1,5 +1,16 @@
 require 'redmine'
 require 'issue_wiki_patches/project_patch'
+require 'issue_wiki_patches/wiki_controller_patch'
+
+Rails.configuration.to_prepare do
+  unless Project.included_modules.include? IssueWikiPatches::ProjectPatch
+    Project.send(:include, IssueWikiPatches::ProjectPatch)
+  end
+
+  unless WikiController.included_modules.include? IssueWikiPatches::WikiControllerPatch
+    WikiController.send(:include, IssueWikiPatches::WikiControllerPatch)
+  end
+end
 
 Redmine::Plugin.register :redmine_issue_wiki do
   name 'Redmine Issue Wiki'

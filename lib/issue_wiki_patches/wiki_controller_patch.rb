@@ -1,5 +1,6 @@
+require_dependency 'wiki_controller'
 module IssueWikiPatches
-  module ProjectPatch
+  module WikiControllerPatch
     
     def self.included(base) # :nodoc:
       base.extend(ClassMethods)
@@ -7,7 +8,6 @@ module IssueWikiPatches
 
       base.class_eval do
         unloadable
-        has_many :issue_wiki_sections, :dependent => :delete_all
       end
     end
 
@@ -18,3 +18,4 @@ module IssueWikiPatches
     end
   end
 end
+

@@ -41,7 +41,7 @@ function show_wiki(id){
     };
   $.ajax({
     url: String(id)+"/showissuewiki.js",
-    type: 'get'
+    type: "get"
   })
   .success(function(data){
     // addIssueWikiWith(data); 
@@ -58,7 +58,7 @@ function show_wiki(id){
 };
 
 function addIssueWikiWith(html){
-  var replacement = $(html);
+  var replacement = $.parseHTML( html ); // $(html);
   $('#issue-wiki').empty();
   $('#issue-wiki').append(replacement);
   $('#issue-wiki').show();
