@@ -8,7 +8,7 @@
 
   wiki_tab = {:label => :label_tab_wiki,    :name => 'issue-wiki'     , :onclick => "show_wiki(#{issue.id});"}
 
-  tabs.push ( wiki_tab ) if User.current.allowed_to?(:wiki_issue, issue.project) %> 
+  tabs.push ( wiki_tab ) if User.current.allowed_to?(:view_issue_wiki, issue.project) %> 
 
 <% selected_tab = 'issue-all' %>
 

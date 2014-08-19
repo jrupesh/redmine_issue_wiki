@@ -3,8 +3,9 @@ module IssueWikiHelper
     s = ""
     if project.issue_wiki_sections.any? && text
       get_issue_wiki_sections(text,project).each do |heading,sub_text|
-        next if heading.start_with?("{{usersection") && sub_text.strip.blank?
-        s << getsectionlabel(heading)
+        next if heading.start_with?("{{usersection") && ( sub_text.strip.blank? ||
+          ( sub_text == "h1. WIKI-#{@issue.id}" ))
+        heading.start_with?("{{usersection") ? s << getusersectionlabel(heading) : s << getsectionlabel(heading)
         s << hidden_field_tag('content[sectiontext][]', heading)
         s << text_area_tag('content[sectiontext][]', sub_text, :cols => 100, :rows => 5,
           :class => 'wiki-edit')
@@ -27,6 +28,14 @@ module IssueWikiHelper
     end
   end
 
+  def getusersectionlabel(sectionlabel)
+    sect_array = sectionlabel.gsub(/{{usersection\(|\)}}/,"").gsub(/'|"/,"").split(",")
+    html_tag  = sect_array[1] || "h1"
+    html_cls  = sect_array[2].nil? ? "class=#{sect_array[2]}" : ""
+    heading   = sect_array[0] || "User Section"
+    "<#{html_tag} #{html_cls}>#{heading}</#{html_tag}>"
+  end
+
   def def_label_tag_section(s,scontent=nil)
     label_tag(s, scontent, :style => "margin-left:0px")
   end
@@ -46,7 +55,7 @@ module IssueWikiHelper
       project.issue_wiki_sections.each do |iws|
         section_array << [ "{{iwsection(#{iws.id})}}", "" ]
       end
-      section_array << [ "{{usersection}}", text ] if text && !text.blank?
+      section_array << [ "{{usersection(User Section,h1)}}", text ] if text && !text.blank?
     end
     # Rails.logger.debug("Printing ARRAY section_array --> #{section_array}\n")
     section_array
