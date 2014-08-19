@@ -6,11 +6,11 @@ module IssueWikiHelper
         next if heading.start_with?("{{usersection") && sub_text.strip.blank?
         s << getsectionlabel(heading)
         s << hidden_field_tag('content[sectiontext][]', heading)
-        s << text_area_tag('content[sectiontext][]', sub_text, :cols => 100, :rows => 10,
+        s << text_area_tag('content[sectiontext][]', sub_text, :cols => 100, :rows => 5,
           :class => 'wiki-edit')
       end
     else
-      s << text_area_tag('content[text]', text, :cols => 100, :rows => 10,
+      s << text_area_tag('content[text]', text, :cols => 100, :rows => 5,
           :class => 'wiki-edit', :accesskey => accesskey(:edit))
     end
     s.html_safe

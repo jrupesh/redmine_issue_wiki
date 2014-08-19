@@ -2,6 +2,10 @@ en:
   label_tab_all: History
   label_tab_comments: Comments
 
+  issue_wiki_section_group: Group for Issue Wiki Section.
+  desc_issue_wiki_section_group: Add default groups for issue wiki sections. Each line corresponds to one group item.
+  label_tool_tip: Section detailed description.
+
   label_tab_wiki: Wiki
   label_iws: Issue Wiki Sections
   label_iws_heading: Section
@@ -9,6 +13,8 @@ en:
   label_iws_creator: Creator/Updator
   label_iws_new: New Section
   label_iws_edit: Edit Section
+  label_section_group: Group
+  label_owner_role: Owner
 
   notice_failed_to_create_iws: Failed to create Wiki Section
   notice_failed_to_detele_iws: Failed to delete Wiki Section

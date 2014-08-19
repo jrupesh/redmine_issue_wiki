@@ -10,7 +10,7 @@ class IssueWikiSectionsController < ApplicationController
       {:project => @project, :user => User.current }))
     @issuewikisections.save
     respond_to do |format|
-      # format.html { redirect_to settings_project_path(:tab => 'issue_wiki_sections', :id => @project) }
+      format.html { redirect_to settings_project_path(:tab => 'issue_wiki_sections', :id => @project) }
       format.js
     end
   end
@@ -33,7 +33,7 @@ class IssueWikiSectionsController < ApplicationController
     @issuewikisections = IssueWikiSection.find(@id)
     @issuewikisections.destroy
     respond_to do |format|
-      # format.html { render 'index' }
+      format.html { redirect_to settings_project_path(:tab => 'issue_wiki_sections', :id => @project) }
       format.js
     end
   end

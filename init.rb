@@ -40,4 +40,6 @@ Redmine::Plugin.register :redmine_issue_wiki do
     permission :manage_issue_wiki_sections, { :issue_wiki_sections => 
       [ :index, :create, :update, :destroy ] }, :require => :member
   end
+
+  settings :default => { 'iw_section_group' => "" }, :partial => 'settings/issue_wiki_section_settings'
 end

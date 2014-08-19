@@ -1,7 +1,7 @@
 class IssueWikiSection < ActiveRecord::Base
   unloadable
   
-  store         :format_store, accessors: [ :wikiformat ]
+  store         :format_store, accessors: [ :wikiformat, :owner_role, :section_group, :tool_tip ]
 
   belongs_to  :project
   belongs_to  :user
