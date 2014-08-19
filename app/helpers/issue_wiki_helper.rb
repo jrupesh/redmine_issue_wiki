@@ -3,6 +3,7 @@ module IssueWikiHelper
     s = ""
     if project.issue_wiki_sections.any? && text
       get_issue_wiki_sections(text,project).each do |heading,sub_text|
+        next if heading.start_with?("{{usersection") && sub_text.strip.blank?
         s << getsectionlabel(heading)
         s << hidden_field_tag('content[sectiontext][]', heading)
         s << text_area_tag('content[sectiontext][]', sub_text, :cols => 100, :rows => 10,

@@ -1,0 +1,5 @@
+<%= wiki_page_breadcrumb(@page) %>
+
+<h2><%= h @page.pretty_title %></h2>
+
+<%= render(:partial => "issue_wiki/edit_issue_wiki", :locals => {:remote_flag => false}) %>

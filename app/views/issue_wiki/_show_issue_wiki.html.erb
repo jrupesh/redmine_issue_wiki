@@ -3,18 +3,22 @@
 <% if @content.current_version? %>
   <%= link_to_if_authorized(l(:button_edit), {:controller => 'issue_wiki', :action => 'edit_issue_wiki', :id => @issue.id },
       :remote => true, :class => 'icon icon-edit', :accesskey => accesskey(:edit)) %>
-  <%= watcher_link(@page, User.current) %>
-  <%= link_to_if_authorized(l(:button_lock), {:controller => 'issue_wiki', :action => 'protect', :id => @page.title, :protected => 1},
-     :method => :post, :class => 'icon icon-lock') if !@page.protected? %>
-  <%= link_to_if_authorized(l(:button_unlock), {:controller => 'issue_wiki', :action => 'protect', :id => @page.title, :protected => 0},
-     :method => :post, :class => 'icon icon-unlock') if @page.protected? %>
-  <%= link_to_if_authorized(l(:button_rename), {:controller => 'issue_wiki', :action => 'rename', :id => @page.title}, :class => 'icon icon-move') %>
-  <%= link_to_if_authorized(l(:button_delete), {:controller => 'issue_wiki', :action => 'destroy', :id => @page.title}, :method => :delete, :data => {:confirm => l(:text_are_you_sure)}, :class => 'icon icon-del') %>
+  <%#= watcher_link(@page, User.current) %>
+  <%= link_to_if_authorized(l(:button_lock), {:controller => 'issue_wiki', :action => 'protect', :id => @issue.id,
+    :protected => 1, :version => @content.version }, :remote => true, :method => :post, :class => 'icon icon-lock') if !@page.protected? %>
+  <%= link_to_if_authorized(l(:button_unlock), {:controller => 'issue_wiki', :action => 'protect', :id => @issue.id,
+    :protected => 0, :version => @content.version }, :remote => true, :method => :post, :class => 'icon icon-unlock') if @page.protected? %>
+  <%= link_to_if_authorized(l(:button_rename), {:controller => 'issue_wiki', :action => 'rename',  :id => @issue.id,
+    :version => @content.version }, :remote => true, :class => 'icon icon-move') %>
+  <%= link_to_if_authorized(l(:button_delete), {:controller => 'issue_wiki', :action => 'destroy', :id => @issue.id},
+    :method => :delete, :data => {:confirm => l(:text_are_you_sure)}, :class => 'icon icon-del') %>
 <% else %>
-  <%= link_to_if_authorized(l(:button_rollback), {:controller => 'issue_wiki', :action => 'edit_issue_wiki', :id => @page.title, :version => @content.version }, :class => 'icon icon-cancel') %>
+  <%= link_to_if_authorized(l(:button_rollback), {:controller => 'wiki', :action => 'edit', :issue_id => @issue.id,
+    :id => @page.title, :project_id => @project.id, :version => @content.version }, :class => 'icon icon-cancel') %>
 <% end %>
 <% end %>
-<%= link_to_if_authorized(l(:label_history), {:controller => 'issue_wiki', :action => 'history', :id => @page.title}, :class => 'icon icon-history') %>
+<%= link_to_if_authorized(l(:label_history), {:controller => 'wiki', :action => 'history',:issue_id => @issue.id,
+      :id => @page.title, :project_id => @project.id}, :class => 'icon icon-history') %>
 </div>
 
 <%= wiki_page_breadcrumb(@page) %>

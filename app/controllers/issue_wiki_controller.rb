@@ -2,6 +2,7 @@ class IssueWikiController < ApplicationController
   unloadable
   before_filter :find_wiki, :authorize
   before_filter :find_existing_or_new_page, :only => [:show_issue_wiki, :update_issue_wiki, :edit_issue_wiki]
+  before_filter :find_existing_page, :only => [:rename, :protect, :add_attachment, :destroy, :preview]
   before_filter :find_attachments, :only => [:preview]
 
   helper :attachments
@@ -31,11 +32,9 @@ class IssueWikiController < ApplicationController
     end
 
     @editable = editable?
-    @sections_editable = @editable && User.current.allowed_to?(:edit_issue_wiki_pages, @page.project) &&
-      @content.current_version? && Redmine::WikiFormatting.supports_section_edit?
 
     respond_to do |format|
-      format.html
+      format.html { redirect_to project_wiki_page_path(@project, @page.title) }
       format.js { render :layout => false }
       format.api
     end    
@@ -81,6 +80,7 @@ class IssueWikiController < ApplicationController
     content_params ||= {}
 
     @content.comments = content_params[:comments]
+    @editable = editable?
     @text = content_params[:text] || (content_params[:sectiontext] && content_params[:sectiontext].join("\n"))
     if params[:section].present? && Redmine::WikiFormatting.supports_section_edit?
       @section = params[:section].to_i
@@ -145,39 +145,32 @@ class IssueWikiController < ApplicationController
     # used to display the *original* title if some AR validation errors occur
     @original_title = @page.pretty_title
     if request.post? && @page.update_attributes(params[:wiki_page])
+
+      @content = @page.content_for_version(params[:version])
+      @editable = editable?
+
       flash[:notice] = l(:notice_successful_update)
-      redirect_to project_wiki_page_path(@project, @page.title)
+      respond_to do |format|
+        format.html { redirect_to project_wiki_page_path(@project, @page.title) }
+        format.js { render :action => 'show_issue_wiki' }
+      end      
+    else
+      respond_to do |format|
+        format.html
+        format.js { render :layout => false }
+      end
     end
   end
 
   def protect
     @page.update_attribute :protected, params[:protected]
-    redirect_to project_wiki_page_path(@project, @page.title)
-  end
+    @content = @page.content_for_version(params[:version])
+    @editable = editable?
 
-  # show page history
-  def history
-    @version_count = @page.content.versions.count
-    @version_pages = Paginator.new @version_count, per_page_option, params['page']
-    # don't load text
-    @versions = @page.content.versions.
-      select("id, author_id, comments, updated_on, version").
-      reorder('version DESC').
-      limit(@version_pages.per_page + 1).
-      offset(@version_pages.offset).
-      all
-
-    render :layout => false if request.xhr?
-  end
-
-  def diff
-    @diff = @page.diff(params[:version], params[:version_from])
-    render_404 unless @diff
-  end
-
-  def annotate
-    @annotate = @page.annotate(params[:version])
-    render_404 unless @annotate
+    respond_to do |format|
+      format.html { redirect_to project_wiki_page_path(@project, @page.title) }
+      format.js { render :action => 'show_issue_wiki' }
+    end    
   end
 
   # Removes a wiki page and its history
@@ -208,47 +201,19 @@ class IssueWikiController < ApplicationController
     end
     @page.destroy
     respond_to do |format|
-      format.html { redirect_to project_wiki_index_path(@project) }
+      format.html { redirect_to issue_path(@issue) }
       format.api { render_api_ok }
     end
   end
 
-  def destroy_version
-    return render_403 unless editable?
-
-    @content = @page.content_for_version(params[:version])
-    @content.destroy
-    redirect_to_referer_or history_project_wiki_page_path(@project, @page.title)
-  end
-
-  # Export wiki to a single pdf or html file
-  def export
-    @pages = @wiki.pages.
-                      order('title').
-                      includes([:content, {:attachments => :author}]).
-                      all
-    respond_to do |format|
-      format.html {
-        export = render_to_string :action => 'export_multiple', :layout => false
-        send_data(export, :type => 'text/html', :filename => "wiki.html")
-      }
-      format.pdf {
-        send_data(wiki_pages_to_pdf(@pages, @project),
-                  :type => 'application/pdf',
-                  :filename => "#{@project.identifier}.pdf")
-      }
-    end
-  end
-
   def preview
-    page = @wiki.find_page(params[:id])
     # page is nil when previewing a new page
-    return render_403 unless page.nil? || editable?(page)
-    if page
-      @attachments += page.attachments
-      @previewed = page.content
+    return render_403 unless @page.nil? || editable?
+    if @page
+      @attachments += @page.attachments
+      @previewed = @page.content
     end
-    @text = params[:content][:text]
+    @text = params[:content][:text] || (params[:content][:sectiontext] && params[:content][:sectiontext].join("\n"))
     render :partial => 'common/preview'
   end
 
@@ -272,7 +237,7 @@ private
 
   # Finds the requested page or a new page if it doesn't exist
   def find_existing_or_new_page
-    @page = @wiki.find_or_new_page("WIKI-#{@issue.id}")
+    @page = @issue.wiki_page || WikiPage.new(:wiki => @wiki, :title => Wiki.titleize("WIKI-#{@issue.id}"), :issue => @issue)
     if @wiki.page_found_with_redirect?
       redirect_to params.update(:id => @page.title)
     end
@@ -280,7 +245,7 @@ private
 
   # Finds the requested page and returns a 404 error if it doesn't exist
   def find_existing_page
-    @page = @wiki.find_page(params[:issue_wiki_id])
+    @page = @issue.wiki_page
     if @page.nil?
       render_404
       return

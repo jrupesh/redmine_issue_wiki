@@ -1,11 +1,7 @@
 <%= form_for @content, :as => :content,
     :url => {:action => 'update_issue_wiki', :id => @issue.id , :issue_wiki_id => @page.title},
-    :html => {:method => :put, :multipart => true, :id => 'issue_wiki_form', :remote => true} do |f| %>
-<%= f.hidden_field :version %>
-<% if @section %>
-<%= hidden_field_tag 'section', @section %>
-<%= hidden_field_tag 'section_hash', @section_hash %>
-<% end %>
+    :html => {:method => :put, :multipart => true, :id => 'issue_wiki_form', :remote => remote_flag} do |f| %>
+<%= hidden_field_tag 'content[version]', @content.version %>
 <%= error_messages_for 'content' %>
 
 <div class="box tabular">
@@ -15,11 +11,12 @@
 </div>
 
 <p><%= submit_tag l(:button_save) %>
-   <%= preview_link({:controller => 'issue_wiki', :action => 'preview', :id => @issue.id, :issue_wiki_id => @page.title }, 'issue_wiki_form') %></p>
+   <%= preview_link({:controller => 'issue_wiki', :action => 'preview', :id => @issue.id, :project_id => @project.id }, 'issue_wiki_form',
+    'issuewikipreview') %></p>
 <%= wikitoolbar_for 'content_text' %>
 <% end %>
 
-<div id="preview" class="wiki"></div>
+<div id="issuewikipreview" class="wiki"></div>
 
 <% content_for :header_tags do %>
   <%= robot_exclusion_tag %>

@@ -10,6 +10,15 @@ Rails.configuration.to_prepare do
   unless WikiController.included_modules.include? IssueWikiPatches::WikiControllerPatch
     WikiController.send(:include, IssueWikiPatches::WikiControllerPatch)
   end
+
+  unless Issue.included_modules.include? IssueWikiPatches::IssuePatch
+    Issue.send(:include, IssueWikiPatches::IssuePatch)
+  end
+
+  unless WikiPage.included_modules.include? IssueWikiPatches::WikiPagePatch
+    WikiPage.send(:include, IssueWikiPatches::WikiPagePatch)
+  end
+
 end
 
 Redmine::Plugin.register :redmine_issue_wiki do
@@ -22,8 +31,11 @@ Redmine::Plugin.register :redmine_issue_wiki do
   project_module :wiki do
     permission :wiki_issue,             { :issue_wiki => [ :show_issue_wiki ] }, :require => :member
     permission :view_issue_wiki_edits,  { :issue_wiki => [ :show_issue_wiki ] }, :require => :member
-    permission :edit_issue_wiki_pages,  { :issue_wiki => [ :show_issue_wiki, :edit_issue_wiki,
-     :update_issue_wiki ] }, :require => :member
+    permission :protect_issue_wiki_pages,  { :issue_wiki => [ :protect ] }, :require => :member
+    permission :rename_issue_wiki_pages,  { :issue_wiki => [ :rename ] }, :require => :member
+    permission :destroy_issue_wiki_pages,  { :issue_wiki => [ :destroy ] }, :require => :member
+    permission :edit_issue_wiki_pages,  { :issue_wiki => [ :edit_issue_wiki,
+     :update_issue_wiki, :preview ] }, :require => :member
 
     permission :manage_issue_wiki_sections, { :issue_wiki_sections => 
       [ :index, :create, :update, :destroy ] }, :require => :member
