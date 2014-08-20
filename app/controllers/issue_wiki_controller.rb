@@ -1,7 +1,8 @@
 class IssueWikiController < ApplicationController
   unloadable
   before_filter :find_wiki, :authorize
-  before_filter :find_existing_or_new_page, :only => [:show_issue_wiki, :update_issue_wiki, :edit_issue_wiki]
+  before_filter :find_existing_or_new_page, :only => [:show_issue_wiki, :update_issue_wiki,
+    :edit_issue_wiki, :master_edit_issue_wiki]
   before_filter :find_existing_page, :only => [:rename, :protect, :add_attachment, :destroy, :preview]
   before_filter :find_attachments, :only => [:preview]
 
@@ -40,6 +41,12 @@ class IssueWikiController < ApplicationController
     end    
   end
 
+  def master_edit_issue_wiki
+    @master_edit = true
+    edit_issue_wiki
+    render :action => 'edit_issue_wiki'
+  end
+
   def edit_issue_wiki
     logger.debug("IssueWikiController : edit_issue_wiki")
     return render_403 unless editable?
@@ -48,7 +55,6 @@ class IssueWikiController < ApplicationController
         @page.parent = @page.wiki.find_page(params[:parent].to_s)
       end
     end
-
     @content = @page.content_for_version(params[:version])
     @content ||= WikiContent.new(:page => @page)
     @content.text = initial_page_content(@page) if @content.text.blank?

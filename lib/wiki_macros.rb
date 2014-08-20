@@ -22,12 +22,12 @@ module WikiMacros
       raw "<#{iws.wikiformat}>#{iws.heading}</#{iws.wikiformat}>".html_safe
     end
   end
-  
+
   Redmine::WikiFormatting::Macros.register do
     desc  "Displays User defined Issue Wiki Sections.\n" +
-          "!{{usersection('text')}}\n" +
-          "!{{usersection('text','html_header')}}\n" +
-          "!{{usersection('text','html_header','group')}}\n"
+          "!{{usersection(text)}}\n" +
+          "!{{usersection(text,html_header)}}\n" +
+          "!{{usersection(text,html_header,group)}}\n"
     macro :usersection do |obj, args|
       return unless @project
       return unless obj.respond_to?(:page)

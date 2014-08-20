@@ -31,6 +31,7 @@ Redmine::Plugin.register :redmine_issue_wiki do
 
   project_module :wiki do
     permission :view_issue_wiki,          { :issue_wiki => :show_issue_wiki }, :require => :member
+    permission :master_edit_issue_wiki,   { :issue_wiki => :master_edit_issue_wiki }, :require => :member
     permission :protect_issue_wiki_pages, { :issue_wiki => :protect },         :require => :member
     permission :rename_issue_wiki_pages,  { :issue_wiki => :rename },          :require => :member
     permission :destroy_issue_wiki_pages, { :issue_wiki => :destroy },         :require => :member

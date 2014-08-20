@@ -1,7 +1,7 @@
 module IssueWikiHelper
-  def edit_issue_wiki_sections(text,project)
+  def edit_issue_wiki_sections(text,project,master_edit=false)
     s = ""
-    if project.issue_wiki_sections.any? && text
+    if project.issue_wiki_sections.any? && text && !master_edit
       get_issue_wiki_sections(text,project).each do |heading,sub_text|
         next if heading.start_with?("{{usersection") && ( sub_text.strip.blank? ||
           ( sub_text == "h1. WIKI-#{@issue.id}" ))
@@ -11,7 +11,7 @@ module IssueWikiHelper
           :class => 'wiki-edit')
       end
     else
-      s << text_area_tag('content[text]', text, :cols => 100, :rows => 5,
+      s << text_area_tag('content[text]', text, :cols => 100, :rows => 20,
           :class => 'wiki-edit', :accesskey => accesskey(:edit))
     end
     s.html_safe
