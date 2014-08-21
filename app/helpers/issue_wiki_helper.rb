@@ -1,11 +1,11 @@
 module IssueWikiHelper
-  def edit_issue_wiki_sections(text,project,master_edit=false)
+  def edit_issue_wiki_sections(page, text,project,master_edit=false)
     s = ""
     if project.issue_wiki_sections.any? && text && !master_edit
 
       cur_sections = project.issue_wiki_sections.collect { |iws| "{{iwsection(#{iws.id})}}" }
 
-      get_issue_wiki_sections(text,project).each do |heading,sub_text|
+      page.get_issue_wiki_sections.each do |heading,sub_text|
         cur_sections.delete(heading) if cur_sections.include?(heading)
         next if heading.start_with?("{{usersection") && ( sub_text.strip.blank? ||
           ( sub_text == "h1. WIKI-#{@issue.id}" ))
@@ -57,26 +57,4 @@ module IssueWikiHelper
     label_tag(s, scontent, :style => "margin-left:0px")
   end
 
-  def get_issue_wiki_sections(text,project)
-    # if text.scan(/{{([^}]*)}}\r?\n(.*?)\r?(?=\n{{|\n?$)/).select{ |k, v| k.start_with? "iwsection" || k == "usersection" }.any? 
-    if (text.chomp.include?("{{iwsection(") || text.chomp.include?("{{usersection"))
-      section_array = text.chomp.split(/\r\n|\n/).inject([]) do |a, v|
-        if v =~ /{{iw.*}}|{{user.*}}/
-          a << [v.gsub(/^{{|}}$/, ""), []]
-        elsif v =~ /{{endiw.*}}/
-        else
-          a.last[1] << v
-        end
-        a
-      end.select{ |k, v| (k.start_with?("iwsection") || k.start_with?("usersection") || k.start_with?("iwtabs") )}.map{ |k, v| ["{{#{k}}}", v.join("\n")] }
-    else
-      section_array = ["{{iwtabs}}"]
-      project.issue_wiki_sections.each do |iws|
-        section_array << [ "{{iwsection(#{iws.id})}}", "" ]
-      end
-      section_array << [ "{{usersection(User Section,h1)}}", text ] if text && !text.blank?
-    end
-    # Rails.logger.debug("Printing ARRAY section_array --> #{section_array}\n")
-    section_array
-  end
 end

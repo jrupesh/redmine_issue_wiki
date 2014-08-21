@@ -6,14 +6,19 @@ function addIssueWikiWith(html){
 };
 
 function hideIssueWiki(){
-  $( ".issue_wiki" ).hide();
-  if ( $('.iw_user_section').length == 1 ){ $( ".issue_wiki_user_tab" ).hide(); }
+  
+  if ( $('.iw_user_section').length == 2 ){ $( "#issue_wiki_user_tab" ).remove(); }
+  if ( $('.issue_wiki_tabs li.iwt').length < 3 )
+    { $( ".issue_wiki_tabs" ).remove(); }
+  else
+    {$( ".issue_wiki" ).hide();}
 };
 
 function showAllIssueWiki(){
   $( ".issue_wiki" ).show();
   $("a.iwtabs").removeClass("selected")
   $("li.showall a").addClass("selected")
+  $('html, body').animate({scrollTop: $(".issue_wiki_tabs li.showall").offset().top}, 100);
 };
 
 function showIssueWiki(iwclass){
@@ -21,6 +26,7 @@ function showIssueWiki(iwclass){
   $("a.iwtabs").removeClass("selected")
   $("li."+iwclass+" a").addClass("selected")
   $( ".issue_wiki."+iwclass ).show();
+  $('html, body').animate({scrollTop: $(".issue_wiki."+iwclass).offset().top}, 100);
 };
 
 $(document).ready(function(){

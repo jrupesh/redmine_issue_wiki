@@ -19,7 +19,8 @@ module WikiMacros
       rescue
         return ''
       end
-      raw "<#{iws.wikiformat} class='issue_wiki #{iws.section_group.downcase}'>#{iws.heading}</#{iws.wikiformat}><div class='issue_wiki #{iws.section_group.downcase}' >".html_safe
+      sec_group = !iws.section_group.nil? ? iws.section_group.downcase : ""
+      raw "<#{iws.wikiformat} class='issue_wiki #{sec_group}'>#{iws.heading}</#{iws.wikiformat}><div class='issue_wiki #{sec_group}' >".html_safe
     end
   end
 
@@ -68,7 +69,7 @@ module WikiMacros
       txt = ""
       if @project.issue_wiki_sections.any?
         txt << "<ul class='issue_wiki_tabs'>"
-        @project.issue_wiki_sections.map(&:section_group).uniq.each do |sg|
+        @project.issue_wiki_sections.map(&:section_group).uniq.reject{ |u| u.nil? }.each do |sg|
           txt << "<li class='iwt #{sg.downcase}'>"
           txt << link_to(sg.titleize, "javascript:void(0);", :id => "tab-#{Redmine::Utils.random_hex(4)}", :class => "iwtabs #{sg.downcase}",
                 :onclick => "showIssueWiki('#{sg.downcase}');")
