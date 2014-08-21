@@ -45,5 +45,8 @@ Redmine::Plugin.register :redmine_issue_wiki do
       [ :index, :create, :update, :destroy ] }, :require => :member
   end
 
-  settings :default => { 'iw_section_group' => "" }, :partial => 'settings/issue_wiki_section_settings'
+  settings :default => {
+    'iw_section_group'    => "",
+    'issue_wiki_tracker'  => "" 
+    }, :partial => 'settings/issue_wiki_section_settings'
 end

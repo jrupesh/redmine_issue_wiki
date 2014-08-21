@@ -2,11 +2,11 @@
   if journals.present?
     all_tab       = {:label => :label_tab_all,      :name => 'issue-all'}
     comments_tab  = {:label => :label_tab_comments, :name => 'issue-comments'}
-    all_flag = 0
-    comment_flag = 0
+    all_flag      = 0
+    comment_flag  = 0
     journals.each do |j|
-      all_flag = 1       if all_flag == 0 && j.details.any?
-      comment_flag = 1   if comment_flag == 0 && !j.notes.blank?
+      all_flag      = 1   if all_flag == 0 && j.details.any?
+      comment_flag  = 1   if comment_flag == 0 && !j.notes.blank?
       break if (all_flag == 1 && comment_flag == 1)
     end
   end
@@ -15,7 +15,8 @@
 
   tabs.push ( all_tab ) if all_flag == 1
   tabs.push ( comments_tab ) if comment_flag == 1
-  tabs.push ( wiki_tab ) if User.current.allowed_to?(:view_issue_wiki, issue.project) %> 
+  puts "I AM HERE> #{issue.tracker.id}"
+  tabs.push ( wiki_tab ) if Setting.plugin_redmine_issue_wiki["issue_wiki_tracker"].include?(issue.tracker_id.to_s) && User.current.allowed_to?(:view_issue_wiki, issue.project) %> 
 
 <% selected_tab = 'issue-all' %>
 
@@ -31,10 +32,12 @@
   </ul>
 </div>
 
-<% if journals.present? %>
-
+<% if tabs.include?(wiki_tab) -%>
 <div id="issue-wiki">
 </div>
+<% end -%>
+
+<% if journals.present? %>
 <% reply_links = authorize_for('issues', 'edit') -%>
 <% for journal in journals %>
   <% if selected_tab == 'issue-all' || journal.css_classes == 'journal has-notes'%>

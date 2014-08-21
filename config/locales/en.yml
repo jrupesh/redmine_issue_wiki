@@ -5,6 +5,8 @@ en:
   issue_wiki_section_group: Group for Issue Wiki Section.
   desc_issue_wiki_section_group: Add default groups for issue wiki sections. Each line corresponds to one group item.
   label_tool_tip: Section detailed description.
+  issue_wiki_tracker: Issue Wiki for Tracker.
+  desc_issue_wiki_tracker: Select the tracker /s for which the Issue Wiki needs to be enabled.
 
   label_tab_wiki: Wiki
   label_iws: Issue Wiki Sections

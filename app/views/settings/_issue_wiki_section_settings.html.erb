@@ -4,3 +4,12 @@
   <br />
   <em><%= l(:desc_issue_wiki_section_group) %></em>
 </p>
+<p>
+  <label><%= l(:issue_wiki_tracker) %></label>
+  <%= select_tag 'settings[issue_wiki_tracker]', options_for_select( Tracker.all.collect {
+   |g| [g.name, g.id] },  @settings[:issue_wiki_tracker].nil? ?
+    "" : @settings[:issue_wiki_tracker] ),
+    { :multiple => true, :style => "width:200px;height:150px;" } %>
+  <br />
+  <em><%= l(:desc_issue_wiki_tracker) %></em>
+</p>
