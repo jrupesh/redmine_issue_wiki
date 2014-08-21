@@ -1,9 +1,20 @@
-<% tabs = [ {:label => :label_tab_all,      :name => 'issue-all'},
-	          {:label => :label_tab_comments, :name => 'issue-comments'}
-          ]
+<% tabs = []
+  if journals.present?
+    all_tab       = {:label => :label_tab_all,      :name => 'issue-all'}
+    comments_tab  = {:label => :label_tab_comments, :name => 'issue-comments'}
+    all_flag = 0
+    comment_flag = 0
+    journals.each do |j|
+      all_flag = 1       if all_flag == 0 && j.details.any?
+      comment_flag = 1   if comment_flag == 0 && !j.notes.blank?
+      break if (all_flag == 1 && comment_flag == 1)
+    end
+  end
 
-  wiki_tab = {:label => :label_tab_wiki,    :name => 'issue-wiki'     , :onclick => "show_wiki(#{issue.id});"}
+  wiki_tab        = {:label => :label_tab_wiki,     :name => 'issue-wiki', :onclick => "show_wiki(#{issue.id});"}
 
+  tabs.push ( all_tab ) if all_flag == 1
+  tabs.push ( comments_tab ) if comment_flag == 1
   tabs.push ( wiki_tab ) if User.current.allowed_to?(:view_issue_wiki, issue.project) %> 
 
 <% selected_tab = 'issue-all' %>
@@ -19,6 +30,9 @@
     <% end -%>
   </ul>
 </div>
+
+<% if journals.present? %>
+
 <div id="issue-wiki">
 </div>
 <% reply_links = authorize_for('issues', 'edit') -%>
@@ -47,3 +61,4 @@
 
 <% heads_for_wiki_formatter if User.current.allowed_to?(:edit_issue_notes, issue.project) || User.current.allowed_to?(:edit_own_issue_notes, issue.project) %>
 
+<% end %>

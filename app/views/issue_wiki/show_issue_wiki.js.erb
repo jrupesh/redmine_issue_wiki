@@ -1,3 +1,4 @@
 $('#tab-issue-wiki').addClass("loaded");
 addIssueWikiWith('<%= escape_javascript(render :partial => 'show_issue_wiki') %>');
 hideIssueWiki();
+$('html, body').animate({scrollTop: $('#issue-wiki').offset().top}, 100);

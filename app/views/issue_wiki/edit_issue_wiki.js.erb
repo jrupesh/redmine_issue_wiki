@@ -1,2 +1,3 @@
 $('#tab-issue-wiki').addClass("loaded");
 addIssueWikiWith('<%= escape_javascript(render :partial => 'edit_issue_wiki', :locals => {:remote_flag => true}) %>');
+$('html, body').animate({scrollTop: $('#issue-wiki').offset().top}, 100);
