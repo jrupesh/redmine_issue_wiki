@@ -2,3 +2,13 @@
 {
   display: none;
 }
+
+
+.issue_wiki_tabs { position: relative; width: 100%; list-style: none; overflow: hidden; }
+.issue_wiki_tabs li {  display: inline; }
+.issue_wiki_tabs li a { padding: 5px 10px; color: black; text-decoration: none; border: 1px solid #ccc; float: left; display: block; margin-left: -1px; position: relative; left: 1px; border-radius: 3px; background: rgb(221, 221, 221);}
+.issue_wiki_tabs li a:hover { color: #fff; background: #000; }
+.issue_wiki_tabs li a.selected { background-color:#9DB9D5; color:#fff;}
+.issue_wiki_tabs { overflow: hidden; padding: 0px 30px 0px 30px; position: relative; top: -1px; }
+.issue_wiki_tabs { display: none; overflow: auto; display: block; position: relative; overflow-x: hidden; }
+.issue_wiki_tabs .iwt { display: block; }

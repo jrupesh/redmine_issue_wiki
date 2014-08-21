@@ -4,6 +4,9 @@ require 'issue_wiki_patches/wiki_controller_patch'
 require 'wiki_macros'
 
 Rails.configuration.to_prepare do
+
+  require_dependency 'issue_wiki_hooks/layout_hooks'
+
   unless Project.included_modules.include? IssueWikiPatches::ProjectPatch
     Project.send(:include, IssueWikiPatches::ProjectPatch)
   end

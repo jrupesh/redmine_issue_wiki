@@ -15,6 +15,7 @@ en:
   label_iws_edit: Edit Section
   label_section_group: Group
   label_owner_role: Owner
+  label_iw_user_defined: User Defined
 
   button_master_edit: Sudo Edit
 

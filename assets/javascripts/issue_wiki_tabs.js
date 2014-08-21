@@ -1,6 +1,32 @@
+function addIssueWikiWith(html){
+  var replacement = $.parseHTML( html ); // $(html);
+  $('#issue-wiki').empty();
+  $('#issue-wiki').append(replacement);
+  $('#issue-wiki').show();
+};
+
+function hideIssueWiki(){
+  $( ".issue_wiki" ).hide();
+  if ( $('.iw_user_section').length == 1 ){ $( ".issue_wiki_user_tab" ).hide(); }
+};
+
+function showAllIssueWiki(){
+  $( ".issue_wiki" ).show();
+  $("a.iwtabs").removeClass("selected")
+  $("li.showall a").addClass("selected")
+};
+
+function showIssueWiki(iwclass){
+  hideIssueWiki();
+  $("a.iwtabs").removeClass("selected")
+  $("li."+iwclass+" a").addClass("selected")
+  $( ".issue_wiki."+iwclass ).show();
+};
+
 $(document).ready(function(){
 
   show_only_comments();
+  hideIssueWiki();
 
   function show_only_comments() {
     $('a#tab-issue-comments').addClass('selected');
@@ -55,11 +81,6 @@ function show_wiki(id){
     alert( "Wiki Load failed: " + textStatus );
   });
   return;
-};
 
-function addIssueWikiWith(html){
-  var replacement = $.parseHTML( html ); // $(html);
-  $('#issue-wiki').empty();
-  $('#issue-wiki').append(replacement);
-  $('#issue-wiki').show();
+  
 };

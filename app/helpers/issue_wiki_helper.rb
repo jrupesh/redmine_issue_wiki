@@ -2,20 +2,37 @@ module IssueWikiHelper
   def edit_issue_wiki_sections(text,project,master_edit=false)
     s = ""
     if project.issue_wiki_sections.any? && text && !master_edit
+
+      cur_sections = project.issue_wiki_sections.collect { |iws| "{{iwsection(#{iws.id})}}" }
+
       get_issue_wiki_sections(text,project).each do |heading,sub_text|
+        cur_sections.delete(heading) if cur_sections.include?(heading)
         next if heading.start_with?("{{usersection") && ( sub_text.strip.blank? ||
           ( sub_text == "h1. WIKI-#{@issue.id}" ))
-        heading.start_with?("{{usersection") ? s << getusersectionlabel(heading) : s << getsectionlabel(heading)
-        s << hidden_field_tag('content[sectiontext][]', heading)
-        s << text_area_tag('content[sectiontext][]', sub_text, :cols => 100, :rows => 5,
-          :class => 'wiki-edit')
+        s << issuewikiformfields(heading,sub_text)
       end
+      cur_sections.each { |heading| s << issuewikiformfields(heading,"") } if cur_sections.any?
     else
       s << text_area_tag('content[text]', text, :cols => 100, :rows => 20,
           :class => 'wiki-edit', :accesskey => accesskey(:edit))
     end
     s.html_safe
   end
+
+  def issuewikiformfields(heading,sub_text)
+    s = ""
+    if heading.start_with?("{{iwtabs}}")
+      s << hidden_field_tag('content[sectiontext][]', heading)
+    else
+      heading.start_with?("{{usersection") ? s << getusersectionlabel(heading) : s << getsectionlabel(heading)
+      s << hidden_field_tag('content[sectiontext][]', heading)
+      s << text_area_tag('content[sectiontext][]', sub_text, :cols => 100, :rows => 5,
+        :class => 'wiki-edit')
+      s << hidden_field_tag('content[sectiontext][]', "{{endiwsection}}")
+    end
+    s
+  end
+
 
   def getsectionlabel(sectionlabel)
     id = sectionlabel.scan(/\d*/)
@@ -29,7 +46,7 @@ module IssueWikiHelper
   end
 
   def getusersectionlabel(sectionlabel)
-    sect_array = sectionlabel.gsub(/{{usersection\(|\)}}/,"").gsub(/'|"/,"").split(",")
+    sect_array = sectionlabel.gsub(/{{usersection|\(|\)|}}/,"").gsub(/'|"/,"").split(",")
     html_tag  = sect_array[1] || "h1"
     html_cls  = sect_array[2].nil? ? "class=#{sect_array[2]}" : ""
     heading   = sect_array[0] || "User Section"
@@ -41,17 +58,19 @@ module IssueWikiHelper
   end
 
   def get_issue_wiki_sections(text,project)
-    if text.scan(/{{([^}]*)}}\r?\n(.*?)\r?(?=\n{{|\n?$)/).select{ |k, v| k.start_with? "iwsection" || k == "usersection" }.any? 
+    # if text.scan(/{{([^}]*)}}\r?\n(.*?)\r?(?=\n{{|\n?$)/).select{ |k, v| k.start_with? "iwsection" || k == "usersection" }.any? 
+    if (text.chomp.include?("{{iwsection(") || text.chomp.include?("{{usersection"))
       section_array = text.chomp.split(/\r\n|\n/).inject([]) do |a, v|
-        if v =~ /{{.*}}/
+        if v =~ /{{iw.*}}|{{user.*}}/
           a << [v.gsub(/^{{|}}$/, ""), []]
+        elsif v =~ /{{endiw.*}}/
         else
           a.last[1] << v
         end
         a
-      end.select{ |k, v| (k.start_with?("iwsection") || k.start_with?("usersection")) }.map{ |k, v| ["{{#{k}}}", v.join("\n")] }
+      end.select{ |k, v| (k.start_with?("iwsection") || k.start_with?("usersection") || k.start_with?("iwtabs") )}.map{ |k, v| ["{{#{k}}}", v.join("\n")] }
     else
-      section_array = []
+      section_array = ["{{iwtabs}}"]
       project.issue_wiki_sections.each do |iws|
         section_array << [ "{{iwsection(#{iws.id})}}", "" ]
       end

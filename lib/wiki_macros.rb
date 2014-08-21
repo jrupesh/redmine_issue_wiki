@@ -19,9 +19,24 @@ module WikiMacros
       rescue
         return ''
       end
-      raw "<#{iws.wikiformat}>#{iws.heading}</#{iws.wikiformat}>".html_safe
+      raw "<#{iws.wikiformat} class='issue_wiki #{iws.section_group.downcase}'>#{iws.heading}</#{iws.wikiformat}><p class='issue_wiki #{iws.section_group.downcase}' >".html_safe
     end
   end
+
+  Redmine::WikiFormatting::Macros.register do
+    desc  "Displays Issue Wiki Sections.\n" +
+          "!{{iwsection(id)}}\n" +
+          "The project sections can be created at Project settings."
+    macro :endiwsection do |obj, args|
+      return unless @project
+      return unless obj.respond_to?(:page)
+      unless User.current.allowed_to?({:controller => 'issue_wiki', :action => 'show_issue_wiki'}, @project)
+        return ''
+      end
+      raw "</p>".html_safe
+    end
+  end
+
 
   Redmine::WikiFormatting::Macros.register do
     desc  "Displays User defined Issue Wiki Sections.\n" +
@@ -35,10 +50,44 @@ module WikiMacros
         return ''
       end
       page      = obj.page
-      text      = args[0] ? args[0].strip : "User Section"
-      html_tag  = args[1] ? args[1].strip : "h1"
-      html_cls  = args[2] ? args[2].strip : ""
-      raw "<#{html_tag} class=#{html_cls}>#{text}</#{html_tag}>".html_safe
+      text      = args[0] ? args[0].strip.gsub(/'|"/,"") : "User Section"
+      html_tag  = args[1] ? args[1].strip.gsub(/'|"/,"") : "h1"
+      html_cls  = args[2] ? args[2].strip.gsub(/'|"/,"") : "issue_wiki"
+      raw "<#{html_tag} class='#{html_cls} iw_user_section'>#{text}</#{html_tag}><p class='#{html_cls} iw_user_section'>".html_safe
+    end
+  end
+
+  Redmine::WikiFormatting::Macros.register do
+    desc  "Displays Issue Wiki Sections Tabs.\n" +
+          "!{{iwtabs}}\n"
+    macro :iwtabs do |obj, args|
+      return unless @project
+      unless User.current.allowed_to?({:controller => 'issue_wiki', :action => 'show_issue_wiki'}, @project)
+        return ''
+      end
+      txt = ""
+      if @project.issue_wiki_sections.any?
+        txt << "<ul class='issue_wiki_tabs'>"
+        @project.issue_wiki_sections.map(&:section_group).uniq.each do |sg|
+          txt << "<li class='iwt #{sg.downcase}'>"
+          txt << link_to(sg.titleize, "javascript:void(0);", :id => "tab-#{Redmine::Utils.random_hex(4)}", :class => "iwtabs #{sg.downcase}",
+                :onclick => "showIssueWiki('#{sg.downcase}');")
+          txt << "</li>"
+        end
+
+        txt << "<li id='issue_wiki_user_tab' class='iwt iw_user_section'>"
+        txt << link_to(l(:label_iw_user_defined), "javascript:void(0);", :id => "tab-#{Redmine::Utils.random_hex(4)}", :class => "iwtabs iw_user_section",
+              :onclick => "showIssueWiki('iw_user_section');")
+        txt << "</li>"        
+
+        txt << "<li class='iwt showall'>"
+        txt << link_to(l(:button_show), "javascript:void(0);", :id => "tab-#{Redmine::Utils.random_hex(4)}", :class => "iwtabs showall",
+              :onclick => "showAllIssueWiki();")
+        txt << "</li>"        
+
+        txt << "</ul>"
+      end
+      raw txt.html_safe
     end
   end
 end

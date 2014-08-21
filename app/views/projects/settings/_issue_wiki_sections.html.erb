@@ -1,4 +1,4 @@
-<%  iw_section_groups = Setting.plugin_redmine_issue_wiki["iw_section_group"].split("\n").map(&:strip) 
+<%  iw_section_groups = Setting.plugin_redmine_issue_wiki["iw_section_group"].split("\n").map(&:strip) + ["General"]
     result = {}
     Role.all.map {|e| result[e.id.to_s] = e.name }
 %>
@@ -92,10 +92,8 @@
     <%= f.text_field :heading, :required => true, :style => "width:80%" %></p>
   <p><%= f.label :wikiformat %><%= f.select :wikiformat, IssueWikiSection::AVAILABLE_FORMATS, 
     :style => "width:4%" %></p>
-  <p><%= f.label :owner_role %><%= f.select :owner_role, options_for_select(Role.all.collect{|r| [r.name,r.id]}), 
-    :include_blank => true %></p>
-  <p><%= f.label :section_group %><%= f.select :section_group, iw_section_groups , 
-    :include_blank => true %></p>
+  <p><%= f.label :owner_role %><%= f.select :owner_role, options_for_select(Role.all.collect{|r| [r.name,r.id]} + [["All", 0]], 0) %></p>
+  <p><%= f.label :section_group %><%= f.select :section_group, options_for_select(iw_section_groups, "General") %></p>
   <p><%= f.label :tool_tip, l(:label_tool_tip) %><%= f.text_area :tool_tip, :cols => 100, :rows => 5 %></p>
 
   <p><%= f.submit l(:button_submit)%>

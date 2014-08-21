@@ -87,7 +87,8 @@ class IssueWikiController < ApplicationController
 
     @content.comments = content_params[:comments]
     @editable = editable?
-    @text = content_params[:text] || (content_params[:sectiontext] && content_params[:sectiontext].join("\n"))
+    @text = content_params[:text] || (content_params[:sectiontext] && content_params[:sectiontext].join("\r\n"))
+
     if params[:section].present? && Redmine::WikiFormatting.supports_section_edit?
       @section = params[:section].to_i
       @section_hash = params[:section_hash]
