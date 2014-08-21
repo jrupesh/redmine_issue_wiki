@@ -1,4 +1,10 @@
 require 'redmine'
+<<<<<<< HEAD
+=======
+require 'issue_wiki_patches/project_patch'
+require 'issue_wiki_patches/wiki_controller_patch'
+require 'issue_wiki_patches/projects_helper_patch'
+>>>>>>> Re-added show.html.erb to master.
 require 'wiki_macros'
 
 Rails.configuration.to_prepare do
@@ -28,13 +34,18 @@ Rails.configuration.to_prepare do
   unless Comment.included_modules.include? IssueWikiPatches::CommentPatch
     Comment.send(:include, IssueWikiPatches::CommentPatch)
   end
+
+  unless ProjectsHelper.included_modules.include? IssueWikiPatches::ProjectsHelperPatch
+    ProjectsHelper.send(:include, IssueWikiPatches::ProjectsHelperPatch)
+  end
+
 end
 
 Redmine::Plugin.register :redmine_issue_wiki do
   name 'Redmine Issue Wiki'
   author 'Rupesh J'
   description 'This plugin provide wiki as a tab representation in a Issue.'
-  version '1.0.0'
+  version '0.1'
   requires_redmine :version_or_higher => '2.5'
 
   project_module :wiki do
