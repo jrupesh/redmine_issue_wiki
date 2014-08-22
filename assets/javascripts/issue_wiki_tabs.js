@@ -1,3 +1,15 @@
+function edit_form_hide(e,id){
+  $( "#iws_edit_form-"+String(id) ).hide();
+  $( "#newiw" ).show();
+  $( "#iws-"+String(id) ).show();
+}
+
+function edit_form_show(e, id){
+  $( e ).parent().parent().hide();
+  $( "#newiw" ).hide();
+  $( "#iws_edit_form-"+String(id) ).show();
+}
+
 function addIssueWikiWith(html){
   var replacement = $.parseHTML( html ); // $(html);
   $('#issue-wiki').empty();

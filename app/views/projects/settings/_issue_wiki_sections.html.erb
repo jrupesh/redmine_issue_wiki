@@ -1,23 +1,13 @@
 <%  iw_section_groups = Setting.plugin_redmine_issue_wiki["iw_section_group"].split("\n").map(&:strip) + ["General"]
     result = {}
-    Role.all.map {|e| result[e.id.to_s] = e.name }
+    all_roles = Role.all
+    values_for_roles_select = all_roles.collect{|r| [r.name,r.id]}
+    all_roles.map {|e| result[e.id.to_s] = e.name }
 %>
 <% if !@project.issue_wiki_sections.any? %>
   <p id="iws_nodata" class="nodata"><%= l(:label_no_data) %></p>
 <% else %>
-  <script type="text/javascript">
-    function edit_form_hide(e){
-      var ele = $( e );
-      ele.parent().parent().hide();
-      ele.parent().parent().prev().show();
-    }
-    function edit_form_show(e){
-      var ele = $( e );
-      ele.parent().parent().hide();
-      ele.parent().parent().next().show();
-    }
-  </script>
-  <table class="list">
+  <table id="iwsectiontable" class="list">
     <thead><tr>
       <th style="width:2%"><%= l(:label_index)%></th>
       <th style="width:70%"><%= l(:label_iws_heading) %></th>
@@ -44,64 +34,85 @@
               :id => iws.id }, :put) %>
           </td>
           <td class="buttons">
-            <%= link_to_function( l(:button_edit), "edit_form_show(this)",
+            <%= link_to_function( l(:button_edit), "edit_form_show(this,#{iws.id})",
             :class => 'icon icon-edit') %>
             <%= delete_link issue_wiki_section_path(:project_id => @project.id, :id => iws.id),
               :remote => true %>
           </td>
         </tr>
-
-        <tr id="iws_edit_form-<%= iws.id %>" style="display:none;">
-          <%= form_for(iws, 
-            :url => update_issue_wiki_section_path(:project_id => @project.id, :id => iws.id),
-            :html => {:method => :post, :style => 'display:none;'}) do |f| %>
-            <td><%= indx + 1 %></td>
-            <td><%= f.text_field :heading, :required => true, :style => "width:72%" %></td>
-            <td><%= f.select :wikiformat,
-              IssueWikiSection::AVAILABLE_FORMATS, :style => "width:4%" %></td>
-            <td><%= f.select :owner_role, options_for_select(Role.all.collect{|r| [r.name,r.id]}, iws.owner_role), :style => "width:4%" %></td>
-            <td><%= f.select :section_group, iw_section_groups, :style => "width:4%" %></td>
-            <td><%= f.text_area :tool_tip, :cols => 20, :rows => 1  %></td>
-
-            <td><%= f.submit l(:button_submit)%></td>
-            <td><%= link_to_function( l(:button_cancel),
-              "edit_form_hide(this)" )%></td>
-            
-          <% end %>
-        </tr>
       <% end %>
     </tbody>
   </table>
+
+  <% @project.issue_wiki_sections.sorted.each_with_index do |iws, indx| %>
+    <div id="iws_edit_form-<%= iws.id %>" class="iws_edit_form" style="display:none;">
+      <%= form_for(iws, 
+        :url => update_issue_wiki_section_path(:project_id => @project.id, :id => iws.id),
+        :html => {:method => :post, :class => "iws_edit_form_grey"}) do |f| %>
+        <h1><%= l(:label_edit_section_name) %> <%= indx + 1 %></h1>
+        <p><%= f.label :heading %>
+        <%= f.text_field :heading, :required => true%>
+
+        <%= f.label :wikiformat %>
+        <%= f.select :wikiformat, IssueWikiSection::AVAILABLE_FORMATS%>
+
+        <%= f.label :owner_role %>
+        <%= f.select :owner_role, options_for_select(values_for_roles_select, iws.owner_role) %>
+
+        <%= f.label :section_group, l(:label_section_group) %>
+        <%= f.select :section_group, options_for_select(iw_section_groups, iws.section_group) %>
+
+        <%= f.label :review_opts %>
+        <%= f.select :review_opts, options_for_select(IssueWikiSection::REVIEW_OPTIONS.to_a, iws.review_opts) %>
+
+        <%= f.label :reviewer_roles %>
+        <%= f.select :reviewer_roles, options_for_select([["None",0]] + values_for_roles_select, 
+          iws.reviewer_roles), {}, :multiple => true %>
+
+        <%= f.label :tool_tip, l(:label_tool_tip) %>
+        <%= f.text_area :tool_tip, :cols => 20, :rows => 1  %>
+
+        <label>
+        <%= f.submit l(:button_submit)%>
+        <%= link_to_function( l(:button_cancel),
+          "edit_form_hide(this, #{iws.id})" )%></label></p>
+      <% end %>
+    </div>
+  <% end %>
 <% end %>
 
-<style type="text/css">
-  #iws_new_form {margin-top: 1em;}
-  #iws_new_form label {font-weight: bold;}
-  #iws_new_form input {margin-top: 1px; margin-bottom: 1px;margin-left:10%;}
-  #iws_new_form #issue_wiki_sections_wikiformat {margin-top: 1px; margin-bottom: 1px;margin-left:9%;}
-  #iws_new_form #issue_wiki_sections_owner_role {margin-top: 1px; margin-bottom: 1px;margin-left:9%;}
-  #iws_new_form #issue_wiki_sections_section_group {margin-top: 1px; margin-bottom: 1px;margin-left:8%;}
-  #iws_new_form #issue_wiki_sections_tool_tip {margin-top: 1px; margin-bottom: 1px;margin-left:2%;}
-  
-</style>
-
+<div class="iws_edit_form">
 <%= form_for(:issue_wiki_sections,
 :url => {:controller => 'issue_wiki_sections', :action => 'create', :project_id => @project.id},
-:html => {:method => :post, :id => "iws_new_form", :style => 'display:none;'}) do |f| %>
+:html => {:method => :post, :id => "iws_new_form", :class => "iws_edit_form_grey", :style => 'display:none;'}) do |f| %>
+
   <p><%= f.label :heading %>
-    <%= f.text_field :heading, :required => true, :style => "width:80%" %></p>
-  <p><%= f.label :wikiformat %><%= f.select :wikiformat, IssueWikiSection::AVAILABLE_FORMATS, 
-    :style => "width:4%" %></p>
-  <p><%= f.label :owner_role %><%= f.select :owner_role, options_for_select(Role.all.collect{|r| [r.name,r.id]} + [["All", 0]], 0) %></p>
-  <p><%= f.label :section_group %><%= f.select :section_group, options_for_select(iw_section_groups, "General") %></p>
-  <p><%= f.label :tool_tip, l(:label_tool_tip) %><%= f.text_area :tool_tip, :cols => 100, :rows => 5 %></p>
+  <%= f.text_field :heading, :required => true %>
 
-  <p><%= f.submit l(:button_submit)%>
-     <%= link_to_function( l(:button_cancel), "$('#iws_new_form').hide();")%></p>
+  <%= f.label :wikiformat %>
+  <%= f.select :wikiformat, IssueWikiSection::AVAILABLE_FORMATS %>
+
+  <%= f.label :owner_role %>
+  <%= f.select :owner_role, options_for_select( values_for_roles_select + [["All", 0]], 0) %>
+
+  <%= f.label :section_group, l(:label_section_group) %>
+  <%= f.select :section_group, options_for_select(iw_section_groups, "General") %>
+
+  <%= f.label :review_opts, l(:label_review_opts) %>
+  <%= f.select :review_opts, options_for_select(IssueWikiSection::REVIEW_OPTIONS.to_a, 0) %>
+
+  <%= f.label :reviewer_roles,l(:label_reviewer_roles)  %>
+  <%= f.select :reviewer_roles, options_for_select([["None",0]]+values_for_roles_select,0), {}, :multiple => true %>
+
+  <%= f.label :tool_tip, l(:label_tool_tip) %>
+  <%= f.text_area :tool_tip, :cols => 100, :rows => 5  %>
+
+  <label><%= f.submit l(:button_submit)%>
+  <%= link_to_function( l(:button_cancel), "$('#iws_new_form').hide();;$( '#newiw' ).show();")%></label></p>
 <% end %>
+</div>
 
-<p>
-  <%= link_to_function( l(:label_iws_new), "$('#iws_new_form').show();",
+<p id="newiw">
+  <%= link_to_function( l(:label_iws_new), "$('#iws_new_form').show();$( '#newiw' ).hide();",
     :class => 'icon icon-add') if User.current.allowed_to?(:manage_issue_wiki_sections, @project)%>
 </p>
-

@@ -17,7 +17,10 @@ en:
   label_iws_edit: Edit Section
   label_section_group: Group
   label_owner_role: Owner
+  label_review_opts: Review by None/All/Any?
+  label_reviewer_roles: Reviewers Role
   label_iw_user_defined: User Defined
+  label_edit_section_name: Edit Section 
 
   button_master_edit: Sudo Edit
 
