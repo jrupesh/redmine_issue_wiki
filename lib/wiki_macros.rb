@@ -26,7 +26,7 @@ module WikiMacros
 
   Redmine::WikiFormatting::Macros.register do
     desc  "Displays Issue Wiki Sections.\n" +
-          "!{{iwsection(id)}}\n" +
+          "!{{endiwsection}}\n" +
           "The project sections can be created at Project settings."
     macro :endiwsection do |obj, args|
       return unless @project
@@ -54,7 +54,7 @@ module WikiMacros
       text      = args[0] ? args[0].strip.gsub(/'|"/,"") : "User Section"
       html_tag  = args[1] ? args[1].strip.gsub(/'|"/,"") : "h1"
       html_cls  = args[2] ? args[2].strip.gsub(/'|"/,"") : "issue_wiki"
-      raw "<#{html_tag} class='#{html_cls} iw_user_section'>#{text}</#{html_tag}><div class='#{html_cls} iw_user_section'>".html_safe
+      raw "<#{html_tag} class='issue_wiki iw_user_section #{html_cls}'>#{text}</#{html_tag}><div class='issue_wiki iw_user_section #{html_cls}'>".html_safe
     end
   end
 
@@ -76,8 +76,8 @@ module WikiMacros
           txt << "</li>"
         end
 
-        txt << "<li id='issue_wiki_user_tab' class='iwt iw_user_section'>"
-        txt << link_to(l(:label_iw_user_defined), "javascript:void(0);", :id => "tab-#{Redmine::Utils.random_hex(4)}", :class => "iwtabs iw_user_section",
+        txt << "<li id='issue_wiki_user_tab' class='iwt iw_user'>"
+        txt << link_to(l(:label_iw_user_defined), "javascript:void(0);", :id => "tab-#{Redmine::Utils.random_hex(4)}", :class => "iwtabs iw_user",
               :onclick => "showIssueWiki('iw_user_section');")
         txt << "</li>"        
 

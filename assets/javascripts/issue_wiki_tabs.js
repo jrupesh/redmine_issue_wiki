@@ -7,7 +7,7 @@ function addIssueWikiWith(html){
 
 function hideIssueWiki(){
   
-  if ( $('.iw_user_section').length == 2 ){ $( "#issue_wiki_user_tab" ).remove(); }
+  if ( $('.iw_user_section').length == 0 ){ $( "#issue_wiki_user_tab" ).remove(); }
   if ( $('.issue_wiki_tabs li.iwt').length < 3 )
     { $( ".issue_wiki_tabs" ).remove(); }
   else
@@ -24,14 +24,23 @@ function showAllIssueWiki(){
 function showIssueWiki(iwclass){
   hideIssueWiki();
   $("a.iwtabs").removeClass("selected")
-  $("li."+iwclass+" a").addClass("selected")
+  if ( iwclass === "iw_user_section" )
+    {$("li.iw_user a").addClass("selected");}
+  else
+    {$("li."+iwclass+" a").addClass("selected");}
   $( ".issue_wiki."+iwclass ).show();
-  $('html, body').animate({scrollTop: $(".issue_wiki."+iwclass).offset().top}, 100);
+  var entity = $(".issue_wiki."+iwclass).offset();
+  if (entity != undefined)
+    {$('html, body').animate({scrollTop: entity.top}, 100);}
 };
 
 $(document).ready(function(){
 
-  show_only_comments();
+  if ( $('a#tab-issue-comments').length > 0 )
+    {show_only_comments();}
+  else
+    {show_history();}
+
   hideIssueWiki();
 
   function show_only_comments() {
@@ -87,6 +96,4 @@ function show_wiki(id){
     alert( "Wiki Load failed: " + textStatus );
   });
   return;
-
-  
 };
