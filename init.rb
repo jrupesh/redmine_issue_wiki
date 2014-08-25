@@ -23,6 +23,9 @@ Rails.configuration.to_prepare do
     WikiPage.send(:include, IssueWikiPatches::WikiPagePatch)
   end
 
+  unless User.included_modules.include? IssueWikiPatches::UserPatch
+    User.send(:include, IssueWikiPatches::UserPatch)
+  end
 end
 
 Redmine::Plugin.register :redmine_issue_wiki do
@@ -38,6 +41,7 @@ Redmine::Plugin.register :redmine_issue_wiki do
     permission :protect_issue_wiki_pages, { :issue_wiki => :protect },         :require => :member
     permission :rename_issue_wiki_pages,  { :issue_wiki => :rename },          :require => :member
     permission :destroy_issue_wiki_pages, { :issue_wiki => :destroy },         :require => :member
+    permission :vote_issue_wiki_pages,    { :issue_wiki => :vote },            :require => :member
     permission :edit_issue_wiki_pages,    { :issue_wiki => [ :edit_issue_wiki,
      :update_issue_wiki, :preview ] },                                         :require => :member
 

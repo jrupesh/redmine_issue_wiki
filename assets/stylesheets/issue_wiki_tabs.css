@@ -3,7 +3,7 @@
   display: none;
 }
 
-
+/************ Issue Wiki Page tabs ***********/
 .issue_wiki_tabs { position: relative; width: 100%; list-style: none; overflow: hidden; }
 .issue_wiki_tabs li {  display: inline; }
 .issue_wiki_tabs li a { padding: 5px 10px; color: black; text-decoration: none; border: 1px solid #ccc; float: left; display: block; margin-left: -1px; position: relative; left: 1px; border-radius: 3px; background: rgb(221, 221, 221);}
@@ -13,6 +13,7 @@
 .issue_wiki_tabs { display: none; overflow: auto; display: block; position: relative; overflow-x: hidden; }
 .issue_wiki_tabs .iwt { display: block; }
 
+/************ Issue Wiki Section forms ***********/
 .iws_edit_form { max-width: 700px; }
 
 .iws_edit_form_grey {
@@ -101,3 +102,12 @@
 .iws_edit_form_grey input[type="submit"]:hover {
     background: #CF7A7A
 }
+
+/********** VOTE ************/
+.voting_wrapper {display:inline-block;margin-left: 20px;float: right;}
+.voting_wrapper .down_button {background: url(/plugin_assets/redmine_issue_wiki/images/thumb_down.png) no-repeat;float: left;height: 14px;width: 16px;cursor:pointer;margin-top: 3px;}
+.voting_wrapper .down_button:hover {background: url(/plugin_assets/redmine_issue_wiki/images/thumb_down.png) no-repeat 0px -16px;}
+.voting_wrapper .up_button {background: url(/plugin_assets/redmine_issue_wiki/images/thumb_up.png) no-repeat;float: left;height: 14px;width: 16px;cursor:pointer;}
+.voting_wrapper .up_button:hover{background: url(/plugin_assets/redmine_issue_wiki/images/thumb_up.png) no-repeat;;}
+.voting_btn{float:left;margin-right:5px;}
+.voting_wrapper span{font-size: 11px;float: left;margin-left: 3px;}

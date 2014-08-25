@@ -3,7 +3,7 @@ class IssueWikiController < ApplicationController
   before_filter :find_wiki, :authorize
   before_filter :find_existing_or_new_page, :only => [:show_issue_wiki, :update_issue_wiki,
     :edit_issue_wiki, :master_edit_issue_wiki]
-  before_filter :find_existing_page, :only => [:rename, :protect, :add_attachment, :destroy, :preview]
+  before_filter :find_existing_page, :only => [:rename, :protect, :add_attachment, :destroy, :preview, :vote]
   before_filter :find_attachments, :only => [:preview]
 
   helper :attachments
@@ -232,6 +232,18 @@ class IssueWikiController < ApplicationController
     redirect_to :action => 'show', :id => @page.title, :project_id => @project
   end
 
+  def vote
+    return render_403 unless !@page.nil?
+    iwv = IssueWikiVote.where(:votable_type => @page.class.name, :votable_id => @page.id,
+      :issue_wiki_section_id => params[:sec_id].to_i, :user_id => User.current.id ).first_or_initialize
+    if iwv.value != params[:value].to_i
+      @sec_id = params[:sec_id]
+      iwv.value = params[:value].to_i
+      iwv.save
+    else
+      render :inline => " #{@page.total_iw_vote_down}"
+    end
+  end
 
 private
   def find_wiki

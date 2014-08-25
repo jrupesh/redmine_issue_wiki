@@ -7,7 +7,8 @@ module IssueWikiPatches
 
       base.class_eval do
         unloadable
-        belongs_to    :issue
+        belongs_to  :issue
+        has_many    :issue_wiki_vote, :as => :votable
       end
     end
 
@@ -56,6 +57,18 @@ module IssueWikiPatches
         else
           return input_text
         end
+      end
+
+      def total_iw_vote_up
+        self.issue_wiki_vote.sum(:value, :conditions => 'value > 0')
+      end
+
+      def total_iw_vote_down
+        self.issue_wiki_vote.sum(:value, :conditions => 'value < 0')
+      end
+
+      def total_iw_vote
+        self.issue_wiki_vote.sum(:value)
       end
     end
   end

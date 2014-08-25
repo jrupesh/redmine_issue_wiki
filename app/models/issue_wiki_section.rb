@@ -15,7 +15,7 @@ class IssueWikiSection < ActiveRecord::Base
   scope :sorted, lambda { order("#{table_name}.position ASC") }
 
   AVAILABLE_FORMATS = [ "H1", "H2", "H3" ].freeze
-  REVIEW_OPTIONS    = { "None" => 0, "All" => 1 , "Any" => 2  }
+  REVIEW_OPTIONS    = { "None" => 0, "All" => 1 , "Any" => 2  }.freeze
 
   def <=>(issuewikisection)
     position <=> issuewikisection.position

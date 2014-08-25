@@ -20,7 +20,18 @@ module WikiMacros
         return ''
       end
       sec_group = !iws.section_group.nil? ? iws.section_group.downcase : ""
-      raw "<#{iws.wikiformat} class='issue_wiki #{sec_group}'>#{iws.heading}</#{iws.wikiformat}><div class='issue_wiki #{sec_group}' >".html_safe
+      s = ""
+      if !iws.review_opts.nil? && iws.review_opts.to_i > 0
+        s << "<div class='issue_wiki #{sec_group} voting_wrapper'>"
+        s << link_to("", issue_wiki_votes_path(:id => page.issue_id,:value => 1, :sec_id => iws.id),
+          :method => :post, :remote => true ,:id => "tab-#{Redmine::Utils.random_hex(4)}", :class => "voting_btn up_button" )
+        s << "<span class='up_votes-#{iws.id}'>#{page.total_iw_vote_up}</span>"
+        s << link_to("", issue_wiki_votes_path(:id => page.issue_id,:value => -1, :sec_id => iws.id),
+          :method => :post, :remote => true ,:id => "tab-#{Redmine::Utils.random_hex(4)}", :class => "voting_btn down_button")
+        s << "<span class='down_votes-#{iws.id}'>#{page.total_iw_vote_down}</span>"
+        s << "</div>"
+      end
+      raw "<#{iws.wikiformat} class='issue_wiki #{sec_group}'>#{iws.heading}#{raw s.html_safe}</#{iws.wikiformat}><div class='issue_wiki #{sec_group}' >".html_safe
     end
   end
 

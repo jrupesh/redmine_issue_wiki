@@ -8,6 +8,8 @@ match 'issues/:id/protectissuewiki',:to => 'issue_wiki#protect', :as => 'issue_w
 match 'issues/:id/renameissuewiki',:to => 'issue_wiki#rename', :as => 'rename_issue_wiki', :via => [:get, :post]
 match 'issues/:id/destroyissuewiki',:to => 'issue_wiki#destroy', :as => 'destroy_issue_wiki', :via => :delete
 
+match 'issues/:id/voteissuewiki',:to => 'issue_wiki#vote', :as => 'issue_wiki_votes', :via => :post
+
 match 'issues/:issue_id/wiki/edit/:id',:to => 'wiki#edit', :via => :get
 match 'issues/:issue_id/wiki/history/:id',:to => 'wiki#history', :via => :get
 
