@@ -26,6 +26,10 @@ Rails.configuration.to_prepare do
   unless User.included_modules.include? IssueWikiPatches::UserPatch
     User.send(:include, IssueWikiPatches::UserPatch)
   end
+
+  unless Comment.included_modules.include? IssueWikiPatches::CommentPatch
+    Comment.send(:include, IssueWikiPatches::CommentPatch)
+  end  
 end
 
 Redmine::Plugin.register :redmine_issue_wiki do

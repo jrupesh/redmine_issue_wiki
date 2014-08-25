@@ -15,8 +15,8 @@
 
   tabs.push ( all_tab ) if all_flag == 1
   tabs.push ( comments_tab ) if comment_flag == 1
-  puts "I AM HERE> #{issue.tracker.id}"
-  tabs.push ( wiki_tab ) if Setting.plugin_redmine_issue_wiki["issue_wiki_tracker"].include?(issue.tracker_id.to_s) && User.current.allowed_to?(:view_issue_wiki, issue.project) %> 
+  trackers = Setting.plugin_redmine_issue_wiki["issue_wiki_tracker"]
+  tabs.push ( wiki_tab ) if trackers && trackers.include?(issue.tracker_id.to_s) && User.current.allowed_to?(:view_issue_wiki, issue.project) %> 
 
 <% selected_tab = 'issue-all' %>
 

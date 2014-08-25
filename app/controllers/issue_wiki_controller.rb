@@ -235,13 +235,17 @@ class IssueWikiController < ApplicationController
   def vote
     return render_403 unless !@page.nil?
     iwv = IssueWikiVote.where(:votable_type => @page.class.name, :votable_id => @page.id,
-      :issue_wiki_section_id => params[:sec_id].to_i, :user_id => User.current.id ).first_or_initialize
+      :issue_wiki_section_id => params[:sec_id].to_i ).first_or_initialize
     if iwv.value != params[:value].to_i
-      @sec_id = params[:sec_id]
-      iwv.value = params[:value].to_i
+      @section    = IssueWikiSection.find(params[:sec_id]) if params[:sec_id]
+      if !@section.nil?
+        iwv.weight  = @section.section_value 
+        iwv.weight  *= -1 if params[:value].to_i < 0
+      end
+      iwv.value   = params[:value].to_i
       iwv.save
     else
-      render :inline => " #{@page.total_iw_vote_down}"
+      render :inline => " #{@page.total_iw_vote}"
     end
   end
 

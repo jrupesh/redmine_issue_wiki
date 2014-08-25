@@ -9,10 +9,11 @@ class IssueWikiVote < ActiveRecord::Base
   validates_uniqueness_of :value, :scope => [:issue_wiki_section_id,
     :votable_type, :votable_id, :user_id] if :unique_issue_wikipage_vote?
 
-  before_save :update_user
+  after_initialize :update_user_weight
 
-  def update_user
-    self.user = User.current 
+  def update_user_weight
+    self.user = User.current
+    self.weight = 0.0 if self.weight.nil?
   end
 
   def unique_issue_wikipage_vote?
