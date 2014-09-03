@@ -1,10 +1,4 @@
 require 'redmine'
-<<<<<<< HEAD
-=======
-require 'issue_wiki_patches/project_patch'
-require 'issue_wiki_patches/wiki_controller_patch'
-require 'issue_wiki_patches/projects_helper_patch'
->>>>>>> Re-added show.html.erb to master.
 require 'wiki_macros'
 
 Rails.configuration.to_prepare do
