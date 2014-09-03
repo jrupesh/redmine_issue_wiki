@@ -26,10 +26,10 @@ module WikiMacros
         
         s << link_to("", issue_wiki_votes_path(:id => page.issue_id,:value => 1, :sec_id => iws.id),
           :method => :post, :remote => true ,:id => "tab-#{Redmine::Utils.random_hex(4)}", :class => "voting_btn up_button" )
-        s << "<span class='up_votes-#{iws.id}'>#{page.total_iw_vote_up}</span>"
+        s << "<span class='up_votes-#{iws.id}'>#{page.total_iw_vote_up(iws)}</span>"
         s << link_to("", issue_wiki_votes_path(:id => page.issue_id,:value => -1, :sec_id => iws.id),
           :method => :post, :remote => true ,:id => "tab-#{Redmine::Utils.random_hex(4)}", :class => "voting_btn down_button")
-        s << "<span class='down_votes-#{iws.id}'>#{page.total_iw_vote_down}</span>"
+        s << "<span class='down_votes-#{iws.id}'>#{page.total_iw_vote_down(iws)}</span>"
       end
       if User.current.allowed_to?(:add_issue_wiki_comments, @project)
         url = url_for(:only_path => true, :controller => 'issue_wiki_comments', :action => 'new',

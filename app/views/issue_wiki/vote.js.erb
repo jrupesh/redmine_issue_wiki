@@ -1,2 +1,2 @@
-$(".up_votes-<%= @section.id %>").text("<%=@page.total_iw_vote_up%>");
-$(".down_votes-<%= @section.id %>").text("<%=@page.total_iw_vote_down%>");
+$(".up_votes-<%= @section.id %>").text("<%=@page.total_iw_vote_up(@section) %>");
+$(".down_votes-<%= @section.id %>").text("<%=@page.total_iw_vote_down(@section) %>");

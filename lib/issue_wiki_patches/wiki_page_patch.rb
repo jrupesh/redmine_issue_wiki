@@ -60,12 +60,12 @@ module IssueWikiPatches
         end
       end
 
-      def total_iw_vote_up
-        self.issue_wiki_vote.sum(:value, :conditions => 'value > 0')
+      def total_iw_vote_up(section)
+        self.issue_wiki_vote.where(:issue_wiki_section_id => section.id).sum(:value, :conditions => 'value > 0')
       end
 
-      def total_iw_vote_down
-        self.issue_wiki_vote.sum(:value, :conditions => 'value < 0')
+      def total_iw_vote_down(section)
+        self.issue_wiki_vote.where(:issue_wiki_section_id => section.id).sum(:value, :conditions => 'value < 0')
       end
 
       def total_iw_vote
