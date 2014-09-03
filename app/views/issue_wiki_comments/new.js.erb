@@ -1,0 +1,13 @@
+<% if @parent.blank? %>
+  $("#comments_form-<%= @section_id %>").html('<%= escape_javascript(render :partial => 'new_form', :locals => { :params => params, :div_id => @section_id, :parent => @parent }).html_safe %>');
+  showAndScrollTo("#add_comment_form-<%= @section_id %>", 'comment_comments-<%= @section_id %>')  
+<% else %>
+
+  if ($("form#add_comment_form-<%= @parent.id %>").length > 0) {
+    $("#comment_comments-<%= @parent.id %>").val('');
+    $("#add_comment_form-<%= @parent.id %>").show();
+  } else {
+    $("#comment_for-<%= @parent.id %>").after('<%= escape_javascript(render :partial => 'new_form', :locals => { :params => params, :div_id => @parent.id, :parent => @parent }).html_safe %>');
+  }
+  showAndScrollTo("#add_comment_form-<%= @parent.id %>", 'comment_comments-<%= @parent.id %>')  
+<% end %>

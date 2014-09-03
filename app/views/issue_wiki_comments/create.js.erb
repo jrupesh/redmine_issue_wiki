@@ -1,0 +1,19 @@
+<% if !@comment.nil? %>
+  <% if @parent_id.blank? %>
+    if ($("#comments_container-<%= @section_id %>").length == 1){
+      var container = $("#comments_container-<%= @section_id %>");
+      container.append( '<%= escape_javascript(render :partial => 'comment', :locals => { :comment => @comment, :page => @page }).html_safe %>' );
+    }else{
+      var container = $('#comments_form-<%= @section_id %>');
+      container.before($('<%= escape_javascript(render :partial => 'createcomment', :locals => { :comment => @comment, :page => @page }).html_safe %>'));
+    }
+      container.show();
+      $('#comments_form-<%= @section_id %>').hide();
+  <% else %>
+    var container = $("#comment_for-<%= @parent_id %>");
+    container.after( '<%= escape_javascript(render :partial => 'comment', :locals => { :comment => @comment, :page => @page }).html_safe %>' );
+    $('#add_comment_form-<%= @parent_id %>').hide();
+    // $("#comment_for-<%= @comment.id %>").attr("class", container.attr("class"));
+    // $("#comment_for-<%= @comment.id %>").addClass("level")
+  <% end %>
+<% end %>

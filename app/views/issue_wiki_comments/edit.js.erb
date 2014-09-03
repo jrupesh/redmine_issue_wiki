@@ -1,0 +1,14 @@
+<% if !@comment.nil? %>
+  // var container = $("#edit_comment_container-<%= @comment.id %>");
+  // container.show();
+  $("#comment_for-<%= @comment.id %>").hide();
+
+  if ($("form#edit_comment_form-<%= @comment.id %>").length > 0) {
+    $("#comment_comments-<%= @comment.id %>").val('');
+    $("#edit_comment_form-<%= @comment.id %>").show();
+  } else {
+    $("#comment_for-<%= @comment.id %>").after('<%= escape_javascript(render :partial => 'edit_form', :locals => { :comment => @comment, :params => params }).html_safe %>');
+  }
+  showAndScrollTo("#edit_comment_form-<%= @comment.id %>", 'comment_comments-<%= @comment.id %>')
+  // container.html('<%= escape_javascript(render :partial => 'edit_form', :locals => { :comment => @comment, :params => params }).html_safe %>');
+<% end %>

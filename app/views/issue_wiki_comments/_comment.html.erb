@@ -1,0 +1,9 @@
+<% if comment.is_a?(ActiveRecord::Relation) %>
+  <%  level_hash = {} %>
+  <% comment.sort_by(&:lft).each do |c| %>
+    <%  level_hash[c.id] =  ( c.parent_id.nil? || level_hash[c.parent_id].nil? ) ? 0 : level_hash[c.parent_id] + 1 %>
+    <%= get_iw_comments(c,page,"level#{level_hash[c.id]}") %> 
+  <% end %>
+<% else %> 
+  <%= get_iw_comments(comment,page) %> 
+<% end %>

@@ -1,0 +1,4 @@
+var container = $("#comment_for-<%= @comment.id %>");
+$("#edit_comment_form-<%= @comment.id %>").remove();
+container.replaceWith($('<%= escape_javascript(render :partial => 'comment', :locals => { :comment => @comment, :page => @page }).html_safe %>'));
+container.show();

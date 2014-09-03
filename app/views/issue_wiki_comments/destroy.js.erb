@@ -1,0 +1,6 @@
+<% if @comment.destroyed? %>
+  $("#comment_for-<%= @comment.id %>").remove();
+<% else %>
+  alert('<%= raw(escape_javascript(l(:notice_failed_to_detele_iw_comment,
+   :errors => @project.errors.full_messages.join(', ')))) %>');
+<% end %>

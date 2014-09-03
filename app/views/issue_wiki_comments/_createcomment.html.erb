@@ -1,0 +1,6 @@
+<fieldset id='comments_container-<%= comment.issue_wiki_section_id %>' class='issue_wiki <%= comment.issue_wiki_section.section_group %> comments_container collapsible collapsed commentsloaded'>
+<% url = issue_wiki_comments_path(:id => page.issue,:section_id => comment.issue_wiki_section_id) %>
+<%= link_to_function(l(:label_comment_plural), "loadIssueWikiComments(this, '#{comment.issue_wiki_section_id}','#{url}');",
+  :class => "issue_wiki #{comment.issue_wiki_section.section_group} collapse") %>
+<%= render(:partial => "comment", :locals => { :comment => @comment, :page => @page }) %>
+</fieldset>

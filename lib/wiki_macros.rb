@@ -21,34 +21,69 @@ module WikiMacros
       end
       sec_group = !iws.section_group.nil? ? iws.section_group.downcase : ""
       s = ""
-      if !iws.review_opts.nil? && iws.review_opts.to_i > 0
-        s << "<div class='issue_wiki #{sec_group} voting_wrapper'>"
+      s << "<div class='issue_wiki #{sec_group} iws_contextual '>"
+      if !iws.review_opts.nil? && iws.review_opts.to_i > 0 && User.current.allowed_to?(:vote_issue_wiki, @project)
+        
         s << link_to("", issue_wiki_votes_path(:id => page.issue_id,:value => 1, :sec_id => iws.id),
           :method => :post, :remote => true ,:id => "tab-#{Redmine::Utils.random_hex(4)}", :class => "voting_btn up_button" )
         s << "<span class='up_votes-#{iws.id}'>#{page.total_iw_vote_up}</span>"
         s << link_to("", issue_wiki_votes_path(:id => page.issue_id,:value => -1, :sec_id => iws.id),
           :method => :post, :remote => true ,:id => "tab-#{Redmine::Utils.random_hex(4)}", :class => "voting_btn down_button")
         s << "<span class='down_votes-#{iws.id}'>#{page.total_iw_vote_down}</span>"
-        s << "</div>"
       end
-      raw "<#{iws.wikiformat} class='issue_wiki #{sec_group}'>#{iws.heading}#{raw s.html_safe}</#{iws.wikiformat}><div class='issue_wiki #{sec_group}' >".html_safe
+      if User.current.allowed_to?(:add_issue_wiki_comments, @project)
+        url = url_for(:only_path => true, :controller => 'issue_wiki_comments', :action => 'new',
+          :id =>  page.issue_id, :wiki_id => page.id, :section_id => iws.id, :format=>:js)
+
+        # url = @_controller.controller_name == "issue_wiki" ? issue_wiki_comments_edit_path(page.issue,iws.id) : 
+        #       wiki_comments_edit_path(:id => @project.id, :wiki_id => page.id, :section_id => iws.id)
+
+        s << link_to_function("", "showIssueWikiCommentForm('#{iws.id}','#{url}');",
+          :class => "issue_wiki icon #{sec_group} icon-comment")
+        # s << "<span/>"
+      end
+      s << "</div>"
+      raw "<#{iws.wikiformat} class='issue_wiki #{sec_group}'>#{iws.heading}</#{iws.wikiformat}>#{raw s.html_safe}<div class='issue_wiki #{sec_group}' >".html_safe
     end
   end
 
   Redmine::WikiFormatting::Macros.register do
     desc  "Displays Issue Wiki Sections.\n" +
           "!{{endiwsection}}\n" +
-          "The project sections can be created at Project settings."
+          "The project sections are created in Project settings."
     macro :endiwsection do |obj, args|
       return unless @project
       return unless obj.respond_to?(:page)
       unless User.current.allowed_to?({:controller => 'issue_wiki', :action => 'show_issue_wiki'}, @project)
         return ''
       end
-      raw "</div>".html_safe
+      begin
+        sect_id = args[0].strip.to_i if args[0]
+        iws = IssueWikiSection.find(sect_id)
+        raise 'Section object nil' if iws.nil?
+      rescue
+        iws = nil
+      end
+
+      s = ""
+
+      if !iws.nil?
+        sec_group = !iws.section_group.nil? ? iws.section_group.downcase : ""
+        if User.current.allowed_to?( :view_issue_wiki_comments, @project) && Comment.exists?(:issue_wiki_section_id => iws.id,
+          :commented_id => obj.page.id, :commented_type => "WikiPage" )
+          s << "<fieldset id='comments_container-#{iws.id}' class='issue_wiki #{sec_group} comments_container collapsible'>"
+          url = issue_wiki_comments_path(:id => obj.page.issue,:section_id => iws.id)
+          s << link_to_function(l(:label_comment_plural), "loadIssueWikiComments(this, '#{iws.id}','#{url}');",
+            :class => "issue_wiki #{sec_group} collapse")
+          s << "</fieldset>"
+        end
+        s << "<div id='comments_form-#{iws.id}'></div>" if User.current.allowed_to?(
+          :add_issue_wiki_comments, @project)
+      end
+
+      raw "#{raw s.html_safe}</div>".html_safe
     end
   end
-
 
   Redmine::WikiFormatting::Macros.register do
     desc  "Displays User defined Issue Wiki Sections.\n" +
@@ -102,4 +137,42 @@ module WikiMacros
       raw txt.html_safe
     end
   end
+
+  Redmine::WikiFormatting::Macros.register do
+    desc "Displays a comment form."
+    macro :comment_form do |obj, args|
+      return unless @project
+      return unless obj.respond_to?(:page)
+      unless User.current.allowed_to?(:add_issue_wiki_comments, @project)
+        return ''
+      end
+      page      = obj.page
+      num = Redmine::Utils.random_hex(4)
+      area_id = "add_comment_area_#{num}"
+      div_id = "add_comment_form_div#{num}"
+
+      o = @_controller.send(:render_to_string, {:partial => "comments/form", :locals =>{:object => page, :area_id => area_id, :div_id => div_id}})
+      o << raw(wikitoolbar_for(area_id))
+      raw o.html_safe
+    end
+  end
+
+  Redmine::WikiFormatting::Macros.register do
+    desc "Display comments of the page."
+    macro :comments do |obj, args|
+      return unless @project
+      return unless obj.respond_to?(:page)
+      unless User.current.allowed_to?(:view_issue_wiki_comments, @project)
+        return ''
+      end
+      page      = obj.page
+
+      data = page.wiki_extension_data
+      comments = WikiExtensionsComment.where(:wiki_page_id => page.id).all
+
+      raw display_comments_tree(comments,nil,page,data)
+
+    end
+  end
+  
 end

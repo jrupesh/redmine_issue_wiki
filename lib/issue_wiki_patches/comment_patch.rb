@@ -7,6 +7,9 @@ module IssueWikiPatches
 
       base.class_eval do
         unloadable
+        
+        belongs_to  :issue_wiki_section
+        acts_as_nested_set :dependent => :destroy
       end
     end
 

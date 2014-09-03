@@ -104,10 +104,66 @@
 }
 
 /********** VOTE ************/
-.voting_wrapper {display:inline-block;margin-left: 20px;float: right;}
-.voting_wrapper .down_button {background: url(/plugin_assets/redmine_issue_wiki/images/thumb_down.png) no-repeat;float: left;height: 14px;width: 16px;cursor:pointer;margin-top: 3px;}
-.voting_wrapper .down_button:hover {background: url(/plugin_assets/redmine_issue_wiki/images/thumb_down.png) no-repeat 0px -16px;}
-.voting_wrapper .up_button {background: url(/plugin_assets/redmine_issue_wiki/images/thumb_up.png) no-repeat;float: left;height: 14px;width: 16px;cursor:pointer;}
-.voting_wrapper .up_button:hover{background: url(/plugin_assets/redmine_issue_wiki/images/thumb_up.png) no-repeat;;}
+.iws_contextual {display:inline-block;margin-left: 20px;float: right;}
+.iws_contextual .down_button {background: url(/plugin_assets/redmine_issue_wiki/images/thumb_down.png) no-repeat;float: left;height: 14px;width: 16px;cursor:pointer;margin-top: 3px;}
+.iws_contextual .down_button:hover {background: url(/plugin_assets/redmine_issue_wiki/images/thumb_down.png) no-repeat 0px -16px;}
+.iws_contextual .up_button {background: url(/plugin_assets/redmine_issue_wiki/images/thumb_up.png) no-repeat;float: left;height: 14px;width: 16px;cursor:pointer;}
+.iws_contextual .up_button:hover{background: url(/plugin_assets/redmine_issue_wiki/images/thumb_up.png) no-repeat;;}
 .voting_btn{float:left;margin-right:5px;}
-.voting_wrapper span{font-size: 11px;float: left;margin-left: 3px;}
+.iws_contextual span{font-size: 11px;float: left;margin-left: 3px;}
+
+
+/************** Wiki Comments ********************/
+fieldset a.collapse { margin-left: 50%; }
+
+.noteclassic, .noteimportant, .notewarning, .notetip, .commentform-box {
+  margin: 1em;
+  margin-left: 4em;
+  margin-right: auto;
+  width: 70% !important;
+  min-height: 40px;
+  clear: left;
+  text-align: justify;
+  vertical-align: middle;
+  border-collapse: collapse;
+  padding: 15px 20px 20px 80px;
+  background-position: 20px 50%;
+  background-repeat: no-repeat;
+  -moz-border-radius: 20px;
+  -khtml-border-radius: 20px;
+  border-radius: 20px;
+}
+ 
+.noteclassic, .commentform-box {
+  /*border: 1px solid #99D;*/
+  background-color: #eef;
+  background-image: url(../images/note.png);
+}
+
+.level0 {margin-left: 4em;}
+.level1 {margin-left: 6em;}
+.level2 {margin-left: 8em;}
+.level3 {margin-left: 10em;}
+.level4 {margin-left: 12em;}
+.level5 {margin-left: 14em;}
+.level6 {margin-left: 16em;}
+.level7 {margin-left: 18em;}
+.level8 {margin-left: 20em;}
+
+.comments_container.collapsible a.collapse {padding-left: 12px; background: url(/images/arrow_collapsed.png) no-repeat -3px 40%;}
+.comments_container.collapsible.collapsed a.collapse {background: url(/images/arrow_expanded.png) no-repeat -5px 40%;}
+
+/**************** Comment form **********************/
+.issue-wiki-edit { height: 90px; width: 100%; }
+
+.commentform-btn {
+  white-space: nowrap;
+  line-height: 1.4em;
+  margin-top: 5px;
+  padding-left: 10px;
+  font-size: 1.2em;
+  margin-left: auto;
+  margin-right: auto;
+  width: 15%;
+}
+

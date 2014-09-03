@@ -1,0 +1,11 @@
+<% if @page.commentable? %>
+  <%= form_for(comment, url: issue_wiki_comments_update_path(:id => comment,:wiki_id => @page), html: {
+    :remote => true, :id => "edit_comment_form-#{comment.id}" } ) do |f| %>
+    <div class="commentform-box level<%= comment.ancestors.length %>">
+      <%= f.text_area :comments, :id => "comment_comments-#{comment.id}", :class => 'issue-wiki-edit' %>
+      <%= wikitoolbar_for "comment_comments-#{comment.id}" %>
+
+      <div class="commentform-btn"><%= f.submit l(:button_update) %><%= link_to_function(l(:button_cancel), "$('#edit_comment_form-#{comment.id}').hide();$('#comment_for-#{comment.id}').show();") %></div>
+    </div>
+  <% end %>
+<% end %>

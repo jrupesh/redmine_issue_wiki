@@ -13,8 +13,10 @@ module IssueWikiHelper
       end
       cur_sections.each { |heading| s << issuewikiformfields(heading,"") } if cur_sections.any?
     else
+      text_id = Redmine::Utils.random_hex(4)
       s << text_area_tag('content[text]', text, :cols => 100, :rows => 20,
-          :class => 'wiki-edit', :accesskey => accesskey(:edit))
+          :class => 'wiki-edit', :accesskey => accesskey(:edit), :id => "content_sectiontext_#{text_id}")
+      s << wikitoolbar_for("content_sectiontext_#{text_id}")
     end
     s.html_safe
   end
@@ -24,11 +26,14 @@ module IssueWikiHelper
     if heading.start_with?("{{iwtabs}}")
       s << hidden_field_tag('content[sectiontext][]', heading)
     else
+      text_id = Redmine::Utils.random_hex(4)
       heading.start_with?("{{usersection") ? s << getusersectionlabel(heading) : s << getsectionlabel(heading)
       s << hidden_field_tag('content[sectiontext][]', heading)
       s << text_area_tag('content[sectiontext][]', sub_text, :cols => 100, :rows => 5,
-        :class => 'wiki-edit')
-      s << hidden_field_tag('content[sectiontext][]', "{{endiwsection}}")
+        :class => 'wiki-edit', :id => "content_sectiontext_#{text_id}")
+      # s << hidden_field_tag('content[sectiontext][]', "{{endiwsection}}")
+      s << hidden_field_tag('content[sectiontext][]', heading.gsub("iwsection","endiwsection").gsub("usersection","endiwsection"))
+      s << wikitoolbar_for("content_sectiontext_#{text_id}")
     end
     s
   end
@@ -57,4 +62,27 @@ module IssueWikiHelper
     label_tag(s, scontent, :style => "margin-left:0px")
   end
 
+  def get_iw_comments(comment,page,level="")
+    s = ""
+    level = "level" + comment.ancestors.length.to_s if level.blank?
+    s << "<div id='comment_for-#{comment.id}' class='noteclassic #{level}'>"
+    s << "<div class='contextual'>"
+    s << link_to_if_authorized(image_tag('edit.png'), {:controller => 'issue_wiki_comments', :action => 'edit', :id => comment.id,
+      :wiki_id => page }, :method => :get, :remote => true, :title => l(:button_edit)) if comment.author == User.current || User.current.admin?
+    s << link_to_if_authorized(image_tag('delete.png'), {:controller => 'issue_wiki_comments', :action => 'destroy', :id => comment.id, :wiki_id => page },
+      :data => {:confirm => l(:text_are_you_sure)}, :remote => true, :method => :delete, :title => l(:button_delete))
+    s << "</div>"
+    s << "<h4>"
+    s << avatar(comment.author, :size => '24')
+    s << authoring(comment.created_on, comment.author)
+    s << "</h4>"
+    s << textilizable(comment.comments)
+    s << "<div class='contextual'>"
+    s << link_to_if_authorized(l(:button_reply), {:controller => 'issue_wiki_comments', :action => 'new', :wiki_id => page,
+      :parent_id => comment.id }, :method => :get, :remote => true, :title => l(:button_reply))
+    s << "</div>"
+    s << "</div>"
+    # s << "<div id='edit_comment_container-#{comment.id}' style='display:none;'></div>"
+    s.html_safe
+  end
 end

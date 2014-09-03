@@ -7,7 +7,7 @@ module IssueWikiPatches
 
       base.class_eval do
         unloadable
-        has_one :wiki_page
+        has_one :wiki_page, :dependent => :delete
       end
     end
 

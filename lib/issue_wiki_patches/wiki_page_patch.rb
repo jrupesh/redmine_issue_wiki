@@ -8,7 +8,8 @@ module IssueWikiPatches
       base.class_eval do
         unloadable
         belongs_to  :issue
-        has_many    :issue_wiki_vote, :as => :votable
+        has_many    :issue_wiki_vote, :as => :votable, :dependent => :delete_all
+        has_many    :comments, :as => :commented, :dependent => :delete_all, :order => "created_on"
       end
     end
 
@@ -48,7 +49,7 @@ module IssueWikiPatches
           ret_text = ""
           section_array.each do |k, v| 
             if (k.start_with?("{{iwsection") || k.start_with?("{{usersection") )
-              ret_text << "#{k}\n#{v}\n{{endiwsection}}\n"
+              ret_text << "#{k}\n#{v}\n#{k.gsub("iwsection","endiwsection").gsub("usersection","endiwsection")}\n"
             else
               ret_text << "#{k}\n#{v}\n"
             end
@@ -69,6 +70,10 @@ module IssueWikiPatches
 
       def total_iw_vote
         self.issue_wiki_vote.sum(:value)
+      end
+
+      def commentable?(user=User.current)
+        user.allowed_to?(:add_issue_wiki_comments, project)
       end
     end
   end

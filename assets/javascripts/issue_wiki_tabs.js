@@ -46,6 +46,33 @@ function showIssueWiki(iwclass){
     {$('html, body').animate({scrollTop: entity.top}, 100);}
 };
 
+function showIssueWikiCommentForm(id,url){
+  var $this = $('#add_comment_form-'+String(id));
+  if ( $this.length == 0 ){
+    $.ajax({
+      url: url,
+      type: 'get',
+      beforeSend: function(){ $this.addClass('ajax-loading'); },
+      complete: function(){ $this.removeClass('ajax-loading'); }
+    });
+  };
+  $("#comment_comments-"+String(id)).val('');
+  showAndScrollTo('comments_form-'+String(id), "comment_comments-"+String(id));
+};
+
+function loadIssueWikiComments(el,id,url){
+  var $this = $('#comments_container-'+String(id));
+  toggleFieldset(el);
+  if ($this.hasClass("commentsloaded") == false ){
+    $.ajax({
+      url: url+".js",
+      type: 'get',
+      beforeSend: function(){ $this.addClass('ajax-loading'); },
+      complete: function(){ $this.removeClass('ajax-loading'); }
+    });
+  };
+};
+
 $(document).ready(function(){
 
   if ( $('a#tab-issue-comments').length > 0 )
@@ -53,7 +80,9 @@ $(document).ready(function(){
   else
     {show_history();}
 
-  hideIssueWiki();
+  if ( $( ".issue_wiki" ).length > 0 ){
+    hideIssueWiki();
+  };
 
   function show_only_comments() {
     $('a#tab-issue-comments').addClass('selected');

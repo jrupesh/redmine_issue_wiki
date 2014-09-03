@@ -1,0 +1,6 @@
+<% if @comments.any? %>
+  var container = $("#comments_container-<%= @section_id %>");
+  container.children("div").remove();
+  container.append($('<%= escape_javascript(render :partial => 'issue_wiki_comments/comment', :locals => { :comment => @comments, :page => @page }).html_safe %>'));
+  container.addClass("commentsloaded");
+<% end %>

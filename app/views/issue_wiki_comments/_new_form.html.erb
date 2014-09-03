@@ -1,0 +1,10 @@
+<% if @page.commentable? %>
+<%= form_tag({:controller => 'issue_wiki_comments', :action => 'create' }.merge(params), :remote => true, :id => "add_comment_form-#{div_id}") do %>
+  <div class="commentform-box level<%= parent.blank? ? 0 : parent.ancestors.length + 1 %>">
+    <%= text_area 'comment', 'comments', :id => "comment_comments-#{div_id}", :cols => 40, :rows => 10, :class => 'wiki-edit' %>
+    <%= wikitoolbar_for "comment_comments-#{div_id}" %>
+  <div class="commentform-btn"><%= parent.blank? ? submit_tag(l(:button_add)) : submit_tag(l(:button_reply)) %><%= parent.blank? ? link_to_function(l(:button_cancel), "$('#comments_form-#{div_id}').hide();") : 
+          link_to_function(l(:button_cancel), "$('#add_comment_form-#{div_id}').hide();") %></div>
+  </div>
+<% end %>
+<% end %>

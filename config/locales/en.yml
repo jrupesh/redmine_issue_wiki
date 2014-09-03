@@ -27,3 +27,4 @@ en:
   notice_failed_to_create_iws: Failed to create Wiki Section
   notice_failed_to_detele_iws: Failed to delete Wiki Section
   notice_failed_to_update_iws: Failed to update Wiki Section
+  notice_failed_to_detele_iw_comment: Failed to delete Wiki Comment

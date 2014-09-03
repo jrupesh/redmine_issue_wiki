@@ -1,9 +1,12 @@
 class IssueWikiController < ApplicationController
   unloadable
-  before_filter :find_wiki, :authorize
+  default_search_scope :wiki_pages
+  
+  before_filter :find_wiki
+  before_filter :authorize, :except => :comments
   before_filter :find_existing_or_new_page, :only => [:show_issue_wiki, :update_issue_wiki,
     :edit_issue_wiki, :master_edit_issue_wiki]
-  before_filter :find_existing_page, :only => [:rename, :protect, :add_attachment, :destroy, :preview, :vote]
+  before_filter :find_existing_page, :only => [:rename, :protect, :add_attachment, :destroy, :preview, :vote, :comments]
   before_filter :find_attachments, :only => [:preview]
 
   helper :attachments
@@ -247,6 +250,18 @@ class IssueWikiController < ApplicationController
     else
       render :inline => " #{@page.total_iw_vote}"
     end
+  end
+
+  def comments
+    return render_403 unless !@page.nil?
+    raise Unauthorized unless User.current.allowed_to?(:view_issue_wiki_comments, @project)
+    @section_id = params[:section_id] || ""
+    # @parent_id  = params[:parent_id]  || ""
+    # @div_id = "#{@section_id}"
+    # @div_id += "-#{@parent_id}" if !@parent_id.blank?
+    
+    @comments = @section_id.nil? ? @page.comments : @page.comments.where(:issue_wiki_section_id => @section_id)
+    @sections = @comments.group_by(&:issue_wiki_section_id)
   end
 
 private

@@ -13,7 +13,6 @@
 <p><%= submit_tag l(:button_save) %>
    <%= preview_link({:controller => 'issue_wiki', :action => 'preview', :id => @issue.id, :project_id => @project.id }, 'issue_wiki_form',
     'issuewikipreview') %></p>
-<%= wikitoolbar_for 'content_text' %>
 <% end %>
 
 <div id="issuewikipreview" class="wiki"></div>

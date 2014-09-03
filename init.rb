@@ -1,6 +1,4 @@
 require 'redmine'
-require 'issue_wiki_patches/project_patch'
-require 'issue_wiki_patches/wiki_controller_patch'
 require 'wiki_macros'
 
 Rails.configuration.to_prepare do
@@ -29,7 +27,7 @@ Rails.configuration.to_prepare do
 
   unless Comment.included_modules.include? IssueWikiPatches::CommentPatch
     Comment.send(:include, IssueWikiPatches::CommentPatch)
-  end  
+  end
 end
 
 Redmine::Plugin.register :redmine_issue_wiki do
@@ -41,16 +39,23 @@ Redmine::Plugin.register :redmine_issue_wiki do
 
   project_module :wiki do
     permission :view_issue_wiki,          { :issue_wiki => :show_issue_wiki }, :require => :member
-    permission :master_edit_issue_wiki,   { :issue_wiki => :master_edit_issue_wiki }, :require => :member
     permission :protect_issue_wiki_pages, { :issue_wiki => :protect },         :require => :member
     permission :rename_issue_wiki_pages,  { :issue_wiki => :rename },          :require => :member
     permission :destroy_issue_wiki_pages, { :issue_wiki => :destroy },         :require => :member
     permission :vote_issue_wiki_pages,    { :issue_wiki => :vote },            :require => :member
     permission :edit_issue_wiki_pages,    { :issue_wiki => [ :edit_issue_wiki,
      :update_issue_wiki, :preview ] },                                         :require => :member
-
+    permission :master_edit_issue_wiki,   { :issue_wiki => :master_edit_issue_wiki },
+                                                                               :require => :member
     permission :manage_issue_wiki_sections, { :issue_wiki_sections => 
-      [ :index, :create, :update, :destroy ] }, :require => :member
+      [ :index, :create, :update, :destroy ] },                                :require => :member
+
+    permission :vote_issue_wiki,          {},                                  :require => :member
+    permission :view_issue_wiki_comments, {},                                  :require => :member
+    permission :delete_issue_wiki_comments, { :issue_wiki_comments => :destroy },
+                                                                               :require => :member
+    permission :add_issue_wiki_comments,  { :issue_wiki_comments => [:create, :edit, :new,
+     :update ] },                                                              :require => :member
   end
 
   settings :default => {
