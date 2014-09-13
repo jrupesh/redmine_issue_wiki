@@ -1,3 +1,11 @@
 $('#tab-issue-wiki').addClass("loaded");
 addIssueWikiWith('<%= escape_javascript(render :partial => 'edit_issue_wiki', :locals => {:remote_flag => true}) %>');
+var url = '<%= escape_javascript(Redmine::Utils.relative_url_root + "/help/" + current_language.to_s.downcase + "/wiki_syntax.html") %>';
+var ele_array;
+ele_array = $( "textarea[name='content[sectiontext][]']");
+if (ele_array.length == 0){
+  ele_array = $( "textarea[name='content[text]']");
+}
+iwdrawWikiToolbar(ele_array, url);
+
 $('html, body').animate({scrollTop: $('#issue-wiki').offset().top}, 100);

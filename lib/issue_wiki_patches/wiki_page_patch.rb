@@ -31,12 +31,21 @@ module IssueWikiPatches
       end
 
       def parse_section_text(input_text)
+        anytext = []
         parsed_section_array = input_text.chomp.split(/\r\n|\n/).inject([]) do |a, v|
           if v =~ /{{iw.*}}|{{user.*}}/
             a << [v.gsub(/^{{|}}$/, ""), []]
           elsif v =~ /{{endiw.*}}/
           else
-            a.last[1] << v
+            if !a.last.nil?
+              if anytext.any?
+                a.last[1] << anytext
+                anytext = []
+              end
+              a.last[1] << v 
+            else
+              anytext << v
+            end
           end
           a
         end.select{ |k, v| (k.start_with?("iwsection") || k.start_with?("usersection") || k.start_with?("iwtabs") )}.map{ |k, v| ["{{#{k}}}", v.join("\n")] }

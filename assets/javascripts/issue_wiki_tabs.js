@@ -17,6 +17,16 @@ function addIssueWikiWith(html){
   $('#issue-wiki').show();
 };
 
+function iwdrawWikiToolbar(ele_array, url){
+  var wikiToolbar;
+  for (i=0; i<ele_array.length;i++)
+  {
+    wikiToolbar = new jsToolBar(ele_array[i]);
+    wikiToolbar.setHelpLink(url);
+    wikiToolbar.draw();
+  };
+};
+
 function hideIssueWiki(){
   
   if ( $('.iw_user_section').length == 0 ){ $( "#issue_wiki_user_tab" ).remove(); }
