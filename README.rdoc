@@ -1,4 +1,11 @@
-= Redmine Issue History
+= Redmine Issue Wiki
+
+The redmine plugin aims at providing a wiki page at each issue.
+Allows the wiki page to be split with pre-defined sections.
+Each section can be "like", "dis-like" for each user of the page.
+The section also has a option to have comments.
+This is the intial implementation of wiki templates for issues, the templates can be any
+of them, either it can be a design template, document template, SRS template, etc. 
 
 == Install
 
@@ -6,10 +13,14 @@
 
 == Uninstall
 
-* rake redmine:plugins NAME= redmine_issue_wiki RAILS_ENV=production
+* rake redmine:plugins NAME=redmine_issue_wiki RAILS_ENV=production
 * rm -r plugins/redmine_issue_wiki
 
 == How it works
+
+* Pre-config, 
+** In plugin settings, select the tracker which needs to have this wiki to be enabled.
+** Add some group options if you intend to define wiki sections.
 
 * Go to issue list.
 * Select an issue. Go to tab "Wiki". This will show a new Wiki for the issue.
