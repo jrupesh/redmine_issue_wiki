@@ -1,7 +1,7 @@
 module IssueWikiHelper
   def edit_issue_wiki_sections(page, text,project,master_edit=false)
     s = ""
-    if project.issue_wiki_sections.any? && text && !master_edit
+    if project.issue_wiki_sections.any? && text && !master_edit && project.module_enabled?(:wiki_templates)
 
       cur_sections = project.issue_wiki_sections.collect { |iws| "{{iwsection(#{iws.id})}}" }
 

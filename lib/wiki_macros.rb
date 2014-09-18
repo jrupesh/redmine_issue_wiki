@@ -8,9 +8,6 @@ module WikiMacros
     macro :iwsection do |obj, args|
       return unless @project
       return unless obj.respond_to?(:page)
-      unless User.current.allowed_to?({:controller => 'issue_wiki', :action => 'show_issue_wiki'}, @project)
-        return ''
-      end
       page    = obj.page
       begin
         sect_id = args[0].strip.to_i if args[0]
@@ -54,9 +51,6 @@ module WikiMacros
     macro :endiwsection do |obj, args|
       return unless @project
       return unless obj.respond_to?(:page)
-      unless User.current.allowed_to?({:controller => 'issue_wiki', :action => 'show_issue_wiki'}, @project)
-        return ''
-      end
       begin
         sect_id = args[0].strip.to_i if args[0]
         iws = IssueWikiSection.find(sect_id)
@@ -93,9 +87,6 @@ module WikiMacros
     macro :usersection do |obj, args|
       return unless @project
       return unless obj.respond_to?(:page)
-      unless User.current.allowed_to?({:controller => 'issue_wiki', :action => 'show_issue_wiki'}, @project)
-        return ''
-      end
       page      = obj.page
       text      = args[0] ? args[0].strip.gsub(/'|"/,"") : "User Section"
       html_tag  = args[1] ? args[1].strip.gsub(/'|"/,"") : "h1"
@@ -109,9 +100,6 @@ module WikiMacros
           "!{{iwtabs}}\n"
     macro :iwtabs do |obj, args|
       return unless @project
-      unless User.current.allowed_to?({:controller => 'issue_wiki', :action => 'show_issue_wiki'}, @project)
-        return ''
-      end
       txt = ""
       if @project.issue_wiki_sections.any?
         txt << "<ul class='issue_wiki_tabs'>"

@@ -3,7 +3,7 @@ class IssueWikiController < ApplicationController
   default_search_scope :wiki_pages
   
   before_filter :find_wiki
-  before_filter :authorize, :except => :comments
+  # before_filter :authorize, :except => :comments
   before_filter :find_existing_or_new_page, :only => [:show_issue_wiki, :update_issue_wiki,
     :edit_issue_wiki, :master_edit_issue_wiki]
   before_filter :find_existing_page, :only => [:rename, :protect, :add_attachment, :destroy, :preview, :vote, :comments]
@@ -20,17 +20,17 @@ class IssueWikiController < ApplicationController
   include IssueWikiHelper
 
   def show_issue_wiki
-    if params[:version] && !User.current.allowed_to?(:view_issue_wiki_edits, @project)
+    if params[:version] && !User.current.allowed_to?(:view_wiki_pages, @project)
       deny_access
       return
     end
     @content = @page.content_for_version(params[:version])
     if @content.nil?
-      if User.current.allowed_to?(:edit_issue_wiki_pages, @project) && editable? && !api_request?
+      if User.current.allowed_to?(:edit_wiki_pages, @project) && editable? && !api_request?
         edit_issue_wiki
         render :action => 'edit_issue_wiki'
       else
-        render_404
+        render :inline => ""
       end
       return
     end

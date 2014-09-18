@@ -1,26 +1,28 @@
 <div class="contextual">
 <% if @editable %>
 <% if @content.current_version? %>
-  <%= link_to_if_authorized(l(:button_master_edit), {:controller => 'issue_wiki', :action => 'master_edit_issue_wiki', :id => @issue.id },
-      :remote => true, :class => 'icon icon-edit') %>
-  <%= link_to_if_authorized(l(:button_edit), {:controller => 'issue_wiki', :action => 'edit_issue_wiki', :id => @issue.id },
-      :remote => true, :class => 'icon icon-edit', :accesskey => accesskey(:edit)) %>
-  <%#= watcher_link(@page, User.current) %>
-  <%= link_to_if_authorized(l(:button_lock), {:controller => 'issue_wiki', :action => 'protect', :id => @issue.id,
-    :protected => 1, :version => @content.version }, :remote => true, :method => :post, :class => 'icon icon-lock') if !@page.protected? %>
-  <%= link_to_if_authorized(l(:button_unlock), {:controller => 'issue_wiki', :action => 'protect', :id => @issue.id,
-    :protected => 0, :version => @content.version }, :remote => true, :method => :post, :class => 'icon icon-unlock') if @page.protected? %>
-  <%= link_to_if_authorized(l(:button_rename), {:controller => 'issue_wiki', :action => 'rename',  :id => @issue.id,
-    :version => @content.version }, :remote => true, :class => 'icon icon-move') %>
-  <%= link_to_if_authorized(l(:button_delete), {:controller => 'issue_wiki', :action => 'destroy', :id => @issue.id},
-    :method => :delete, :data => {:confirm => l(:text_are_you_sure)}, :class => 'icon icon-del') %>
+  <%= link_to(l(:button_master_edit), {:controller => 'issue_wiki', :action => 'master_edit_issue_wiki', :id => @issue.id },
+      :remote => true, :class => 'icon icon-edit') if User.current.allowed_to?(:master_edit_issue_wiki, @project) %>
+  <%= link_to(l(:button_edit), {:controller => 'issue_wiki', :action => 'edit_issue_wiki', :id => @issue.id },
+      :remote => true, :class => 'icon icon-edit',
+      :accesskey => accesskey(:edit)) if User.current.allowed_to?(:edit_wiki_pages, @project) %>
+  <%= link_to(l(:button_lock), {:controller => 'issue_wiki', :action => 'protect', :id => @issue.id,
+    :protected => 1, :version => @content.version }, :remote => true, :method => :post,
+    :class => 'icon icon-lock') if !@page.protected? && User.current.allowed_to?(:protect_wiki_pages, @project) %>
+  <%= link_to(l(:button_unlock), {:controller => 'issue_wiki', :action => 'protect', :id => @issue.id,
+    :protected => 0, :version => @content.version }, :remote => true, :method => :post,
+    :class => 'icon icon-unlock') if @page.protected? && User.current.allowed_to?(:protect_wiki_pages, @project) %>
+  <%= link_to(l(:button_rename), {:controller => 'issue_wiki', :action => 'rename',  :id => @issue.id,
+    :version => @content.version }, :remote => true, :class => 'icon icon-move') if User.current.allowed_to?(:rename_wiki_pages, @project) %>
+  <%= link_to(l(:button_delete), {:controller => 'issue_wiki', :action => 'destroy', :id => @issue.id},
+    :method => :delete, :data => {:confirm => l(:text_are_you_sure)}, :class => 'icon icon-del') if User.current.allowed_to?(:delete_wiki_pages, @project) %>
 <% else %>
-  <%= link_to_if_authorized(l(:button_rollback), {:controller => 'wiki', :action => 'edit', :issue_id => @issue.id,
-    :id => @page.title, :project_id => @project.id, :version => @content.version }, :class => 'icon icon-cancel') %>
+  <%= link_to(l(:button_rollback), {:controller => 'wiki', :action => 'edit', :issue_id => @issue.id,
+    :id => @page.title, :project_id => @project.id, :version => @content.version }, :class => 'icon icon-cancel') if User.current.allowed_to?(:manage_wiki, @project) %>
 <% end %>
 <% end %>
-<%= link_to_if_authorized(l(:label_history), {:controller => 'wiki', :action => 'history',:issue_id => @issue.id,
-      :id => @page.title, :project_id => @project.id}, :class => 'icon icon-history') %>
+<%= link_to(l(:label_history), {:controller => 'wiki', :action => 'history',:issue_id => @issue.id,
+  :id => @page.title, :project_id => @project.id}, :class => 'icon icon-history') if User.current.allowed_to?(:view_wiki_edits, @project) %>
 </div>
 
 <%= wiki_page_breadcrumb(@page) %>

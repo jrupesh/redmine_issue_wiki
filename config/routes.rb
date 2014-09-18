@@ -19,6 +19,6 @@ match 'issues/:id/wiki/:wiki_id/comments/:section_id',:to => 'issue_wiki_comment
 match 'issues/:id/wiki/:wiki_id/comments/:section_id',:to => 'issue_wiki_comments#create', :as => "issue_wiki_comments_create", :via => :post
 match 'issue_wiki_comments/:id',:to => 'issue_wiki_comments#edit', :as => "issue_wiki_comments_edit", :via => :get
 match 'issue_wiki_comments/:id',:to => 'issue_wiki_comments#update', :as => "issue_wiki_comments_update", :via => [ :put, :post ]
+match 'projects/:project_id/issue_wiki_section/:id', :to => 'issue_wiki_sections#update', :via => [:put, :post], :as => 'update_issue_wiki_section'
 resources :issue_wiki_comments
 resources :issue_wiki_sections
-match 'projects/:project_id/issue_wiki_section/:id', :to => 'issue_wiki_sections#update', :via => [:put, :post], :as => 'update_issue_wiki_section'

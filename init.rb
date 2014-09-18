@@ -38,13 +38,6 @@ Redmine::Plugin.register :redmine_issue_wiki do
   requires_redmine :version_or_higher => '2.5'
 
   project_module :wiki do
-    permission :view_issue_wiki,          { :issue_wiki => :show_issue_wiki }, :require => :member
-    permission :protect_issue_wiki_pages, { :issue_wiki => :protect },         :require => :member
-    permission :rename_issue_wiki_pages,  { :issue_wiki => :rename },          :require => :member
-    permission :destroy_issue_wiki_pages, { :issue_wiki => :destroy },         :require => :member
-    permission :vote_issue_wiki_pages,    { :issue_wiki => :vote },            :require => :member
-    permission :edit_issue_wiki_pages,    { :issue_wiki => [ :edit_issue_wiki,
-     :update_issue_wiki, :preview ] },                                         :require => :member
     permission :vote_issue_wiki,          {},                                  :require => :member
     permission :view_issue_wiki_comments, {},                                  :require => :member
     permission :delete_issue_wiki_comments, { :issue_wiki_comments => :destroy },
@@ -60,9 +53,9 @@ Redmine::Plugin.register :redmine_issue_wiki do
                                                                                :require => :member
   end
 
-  project_module :quality_tree do
+  # project_module :quality_tree do
 
-  end
+  # end
 
   settings :default => {
     'iw_section_group'    => "",
